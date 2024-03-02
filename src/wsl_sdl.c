@@ -1,0 +1,154 @@
+/*
+* Space Shooter
+* Copyright (C) Zach Wilder 2024
+* 
+* This file is a part of Space Shooter
+*
+* Space Shooter is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+* 
+* Space Shooter is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+* 
+* You should have received a copy of the GNU General Public License
+* along with Space Shooter.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include <spaceshooter.h>
+
+WSL_SDL_App* wsl_init_sdl(void) {
+    bool success = true;
+    int imgflags = IMG_INIT_PNG;
+
+    WSL_SDL_App *app = malloc(sizeof(WSL_SDL_App));
+
+    // Initialize SDL
+    if(SDL_Init(SDL_INIT_VIDEO) < 0) {
+        printf("SDL could not initialize. SDL Error: %s\n", SDL_GetError());
+        success = false;
+    }
+
+    // Create the window
+    if(success) {
+        app->window = SDL_CreateWindow("Space Shooter!",
+                SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+        if(!app->window) {
+            printf("Unable to create window. SDL Error: %s\n",
+                    SDL_GetError());
+            success = false;
+        }
+    }
+
+    // Create the renderer
+    if(success) {
+        app->renderer = SDL_CreateRenderer(app->window, -1,
+                SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+        if(!app->renderer) {
+            printf("Renderer could not be created. SDL Error %s\n",
+                    SDL_GetError());
+            success = false;
+        }
+    }
+
+    // Initialize SDL_Image
+    if(success) {
+        SDL_SetRenderDrawColor(app->renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+        if(!(IMG_Init(imgflags) & imgflags)) {
+            printf("SDL Image could not initialize. SDL image error: %s\n",
+                    IMG_GetError());
+            success = false;
+        }
+    }
+
+    // Get the window surface
+    if(success) {
+        app->screen_surface = SDL_GetWindowSurface(app->window);
+    }
+
+    success = wsl_load_media(app);
+
+    // If everything went well, return app, otherwise cleanup and return NULL
+    if(!success) {
+        wsl_cleanup_sdl(app);
+        app = NULL;
+    }
+
+    app->running = true;
+    return app;
+}
+
+void wsl_cleanup_sdl(WSL_SDL_App *app) {
+    if(!app) return;
+    SDL_DestroyRenderer(app->renderer);
+    app->renderer = NULL;
+    SDL_DestroyWindow(app->window);
+    app->window = NULL;
+    destroy_wsl_texture(app->spritesheet);
+    IMG_Quit();
+    SDL_Quit();
+    free(app);
+}
+
+bool wsl_load_media(WSL_SDL_App *app) {
+    bool success = true;
+    app->spritesheet = create_wsl_texture(app->renderer);
+    if(!wsl_texture_load(app->spritesheet,"assets/spritesheet.png")) {
+        printf("Unable to load assets/spritesheet.png!\n");
+        success = false;
+    }
+    return success;
+}
+
+WSL_Texture* create_wsl_texture(SDL_Renderer *renderer) {
+    WSL_Texture *t = malloc(sizeof(WSL_Texture));
+    t->tex = NULL;
+    t->w = 0;
+    t->h = 0;
+    t->renderer = renderer;
+    return t;
+}
+
+void destroy_wsl_texture(WSL_Texture *t) {
+    if(!t) return;
+    if(t->tex) {
+        SDL_DestroyTexture(t->tex);
+        t->tex = NULL;
+    }
+    free(t);
+    t = NULL;
+}
+
+bool wsl_texture_load(WSL_Texture *t, char *path) {
+    SDL_Surface *loaded = NULL;
+    
+    if(!t) return false;
+    if(t->tex) {
+        SDL_DestroyTexture(t->tex);
+        t->tex = NULL;
+    }
+    
+    loaded = IMG_Load(path);
+    if(!loaded) {
+        printf("Unable to load image %s! SDL_image Error: %s\n",
+                path, IMG_GetError());
+        return false;
+    }
+
+    SDL_SetColorKey(loaded, SDL_TRUE, SDL_MapRGB(loaded->format, 0, 0xFF, 0xFF));
+    t->tex = SDL_CreateTextureFromSurface(t->renderer, loaded);
+    if(!t->tex) {
+        printf("Unable to create texture from %s! SDL Error: %s\n", path,
+                SDL_GetError());
+        return false;
+    }
+    t->w = loaded->w;
+    t->h = loaded->h;
+
+    SDL_FreeSurface(loaded);
+    return true;
+}
