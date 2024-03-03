@@ -18,33 +18,22 @@
 * along with Space Shooter.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SPACESHOOTER_H
-#define SPACESHOOTER_H
+#include <spaceshooter.h>
 
-/*****
- * System
- *****/
-#include <stdio.h>
-#include <stdbool.h>
+void draw(WSL_App *game) {
+    Entity *tmp = NULL;
 
-/*****
- * SDL2
- *****/
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+    // Clear the screen
+    SDL_SetRenderDrawColor(game->renderer, 0x00, 0x00, 0x00, 0xFF);
+    SDL_RenderClear(game->renderer);
 
-/*****
- * Toolbox
- *****/
+    // Render the entities
+    tmp = game->entities;
+    while(tmp) {
+        tmp->render(tmp, game);
+        tmp = tmp->next;
+    }
 
-/*****
- * Project
- *****/
-#include <defs.h>
-#include <entity.h>
-#include <wsl_sdl.h>
-#include <handle_events.h>
-#include <update.h>
-#include <draw.h>
-
-#endif //SPACESHOOTER_H
+    // Present
+    SDL_RenderPresent(game->renderer);
+}

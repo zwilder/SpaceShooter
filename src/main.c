@@ -44,18 +44,9 @@ int main(int argc, char **argv) {
         update(game);
 
         //Draw
-        // Clear the screen
-        SDL_SetRenderDrawColor(game->renderer, 0x00, 0x00, 0x00, 0xFF);
-        SDL_RenderClear(game->renderer);
+        draw(game);
 
-        tmp = game->entities;
-        while(tmp) {
-            tmp->render(tmp, game);
-            tmp = tmp->next;
-        }
-
-        // Present
-        SDL_RenderPresent(game->renderer);
+        //Delay to set framerate?
         SDL_Delay(16);
     }
 
