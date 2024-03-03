@@ -24,6 +24,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+typedef struct Entity Entity;
+
 typedef struct {
     SDL_Texture *tex;
     SDL_Renderer *renderer; // Maybe unnecessary
@@ -31,32 +33,31 @@ typedef struct {
     int h;
 } WSL_Texture;
 
-/* Just an idea
 typedef struct {
-    WSL_Texture *t; // Texture of the spritesheet
-    SDL_Rect *clips; // Array of rects for each sprite
-    char **clipnames; // Array of string names for each sprite
-} WSL_Spritesheet;
-*/
-
-typedef struct {
-    SDL_Window *window;
+    SDL_Window *window; // The SDL Window
     SDL_Surface *screen_surface;
-    SDL_Renderer *renderer;
-    WSL_Texture *spritesheet;
+    SDL_Renderer *renderer; // The SDL Renderer
+    WSL_Texture *spritesheet; // Spritesheet with all the sprites
+    Entity *entities; // Linked list of all the entities
+
+    // Temporary stuff
     bool running; // Will likely be replaced with bitflags tlater
     bool up; // These 4 will be replaced
     bool down;
     bool left;
     bool right;
-} WSL_SDL_App;
+    bool fire;
+} WSL_App;
 
 /*****
- * WSL_SDL_App
+ * WSL_App
  *****/
-WSL_SDL_App* wsl_init_sdl(void);
-void wsl_cleanup_sdl(WSL_SDL_App *app);
-bool wsl_load_media(WSL_SDL_App *app);
+WSL_App* wsl_init_sdl(void);
+void wsl_cleanup_sdl(WSL_App *app);
+bool wsl_load_media(WSL_App *app);
+void wsl_add_entity(WSL_App *app, Entity *entity);
+Entity* wsl_remove_entity(WSL_App *app, Entity *entity);
+void wsl_destroy_entity(WSL_App *app, Entity *entity);
 
 /*****
  * WSL_Texture

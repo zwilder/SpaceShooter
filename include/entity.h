@@ -21,15 +21,43 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
-#include <SDL2/SDL.h>
+#include <wsl_sdl.h>
 
-typedef struct {
-    int x;
+typedef enum {
+    EF_NONE         = 1 << 0,
+    EF_ALIVE        = 1 << 1,
+    EF_PLAYER       = 1 << 2,
+    EF_ENEMY        = 1 << 3,
+    EF_COOLDOWN     = 1 << 4,
+    EF_PROJECTILE   = 1 << 5
+} EntityFlags;
+
+typedef struct Entity Entity;
+
+struct Entity {
+    int x; // Will probably replace with a Vec2i
     int y;
-    SDL_Rect spriterect;
-} Entity;
+    int dx;
+    int dy;
+    int speed; // How fast the entity is
+    int cooldown;
+    int flags;
+    SDL_Rect spriterect; // Rect of the player sprite, spritesheet.xml
+    Entity *next; // Entity is a linked list node, WSL_App contains the head
+    Entity *prev;
+    void (*update)(Entity*, WSL_App*); // Entity update function
+    void (*render)(Entity*, WSL_App*); // Entity render function
+};
 
 Entity* create_entity(SDL_Rect spriterect);
 void destroy_entity(Entity *entity);
+int count_entities(Entity *entity);
+Entity* create_player(SDL_Rect spriterect);
+Entity* create_projectile(Entity *from, SDL_Rect spriterect);
+
+void update_player(Entity *player, WSL_App *game);
+void update_projectile(Entity *proj, WSL_App *game);
+
+void entity_render(Entity *entity, WSL_App *game);
 
 #endif //ENTITY_H

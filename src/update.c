@@ -20,6 +20,29 @@
 
 #include <spaceshooter.h>
 
-void update(WSL_SDL_App *game) {
+void update(WSL_App *game) {
+    Entity *entity = NULL, *tmp = NULL;
 
+    // Update entities
+    entity = game->entities;
+    while(entity) {
+        entity->update(entity,game);
+        entity = entity->next;
+    }
+
+    // Cleanup list
+    entity = game->entities;
+    while(entity) {
+        tmp = entity;
+        entity = entity->next;
+        if(tmp->cooldown) {
+            tmp->cooldown -= 1;
+        } else {
+            tmp->flags &= ~EF_COOLDOWN;
+        }
+        if(!((tmp->flags & EF_ALIVE) == EF_ALIVE)) {
+            //Entity is dead, remove it
+            wsl_destroy_entity(game, tmp);
+        }
+    }
 }

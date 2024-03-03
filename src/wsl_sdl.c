@@ -20,11 +20,14 @@
 
 #include <spaceshooter.h>
 
-WSL_SDL_App* wsl_init_sdl(void) {
+/*****
+ * WSL_App
+ *****/
+WSL_App* wsl_init_sdl(void) {
     bool success = true;
     int imgflags = IMG_INIT_PNG;
 
-    WSL_SDL_App *app = malloc(sizeof(WSL_SDL_App));
+    WSL_App *app = malloc(sizeof(WSL_App));
 
     // Initialize SDL
     if(SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -79,15 +82,23 @@ WSL_SDL_App* wsl_init_sdl(void) {
     }
 
     app->running = true;
+    app->entities = NULL;
+    
+    //Temporary stuff
     app->up = false;
     app->down = false;
     app->left = false;
     app->right = false;
+    app->fire = false;
+
     return app;
 }
 
-void wsl_cleanup_sdl(WSL_SDL_App *app) {
+void wsl_cleanup_sdl(WSL_App *app) {
+    Entity *entity = NULL;
     if(!app) return;
+
+    // Cleanup SDL
     destroy_wsl_texture(app->spritesheet);
     SDL_DestroyRenderer(app->renderer);
     app->renderer = NULL;
@@ -95,10 +106,18 @@ void wsl_cleanup_sdl(WSL_SDL_App *app) {
     app->window = NULL;
     IMG_Quit();
     SDL_Quit();
+
+    // Cleanup entity list
+    while(app->entities) {
+        entity = app->entities;
+        app->entities = app->entities->next;
+        destroy_entity(entity);
+    }
+
     free(app);
 }
 
-bool wsl_load_media(WSL_SDL_App *app) {
+bool wsl_load_media(WSL_App *app) {
     bool success = true;
     app->spritesheet = create_wsl_texture(app->renderer);
     if(!wsl_texture_load(app->spritesheet,"assets/spritesheet.png")) {
@@ -108,6 +127,64 @@ bool wsl_load_media(WSL_SDL_App *app) {
     return success;
 }
 
+void wsl_add_entity(WSL_App *app, Entity *entity) {
+    Entity *e = NULL;
+    if(!app || !entity) return;
+    if(!app->entities) {
+        // First entity in list!
+        app->entities = entity;
+        return;
+    }
+    // Find last entity, set it's next to entity
+    e = app->entities;
+    while(e->next) {
+        e = e->next;
+    }
+    e->next = entity;
+    entity->prev = e;
+}
+
+Entity* wsl_remove_entity(WSL_App *app, Entity *entity) {
+    if(!app || !entity) return NULL;
+    if(!app->entities) return NULL;
+    Entity *e = app->entities;
+    Entity *prev = NULL;
+    if(e == entity) {
+        app->entities = app->entities->next;
+        e->next = NULL;
+        e->prev = NULL;
+    } else {
+        while(e != entity && e) {
+            prev = e;
+            e = e->next;
+        }
+        if(e) {
+            prev->next = e->next;
+            if(e->next) {
+                e->next->prev = prev;
+            }
+            e->next = NULL;
+            e->prev = NULL;
+        }
+    }
+    return e;
+}
+
+void wsl_destroy_entity(WSL_App *app, Entity *entity) {
+    if(!app) {
+        destroy_entity(entity);
+        return;
+    } 
+    if(!entity) return;
+    // Remove entity from game list
+    wsl_remove_entity(app, entity);
+    // Destroy entity
+    destroy_entity(entity);
+}
+
+/*****
+ * WSL_Texture
+ *****/
 WSL_Texture* create_wsl_texture(SDL_Renderer *renderer) {
     WSL_Texture *t = malloc(sizeof(WSL_Texture));
     t->tex = NULL;

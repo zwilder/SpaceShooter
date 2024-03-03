@@ -41,8 +41,8 @@
  * Project
  *****/
 #include <defs.h>
-#include <wsl_sdl.h>
 #include <entity.h>
+#include <wsl_sdl.h>
 #include <handle_events.h>
 #include <update.h>
 

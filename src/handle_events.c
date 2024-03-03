@@ -20,7 +20,7 @@
 
 #include <spaceshooter.h>
 
-void handle_events(WSL_SDL_App *game) {
+void handle_events(WSL_App *game) {
     SDL_Event e;
     while(SDL_PollEvent(&e) != 0) {
         switch(e.type) {
@@ -39,7 +39,7 @@ void handle_events(WSL_SDL_App *game) {
     }
 }
 
-void handle_keydown(SDL_KeyboardEvent *event, WSL_SDL_App *game) {
+void handle_keydown(SDL_KeyboardEvent *event, WSL_App *game) {
     if(event->repeat == 0) {
         if(event->keysym.scancode == SDL_SCANCODE_UP) {
             game->up = true;
@@ -53,6 +53,10 @@ void handle_keydown(SDL_KeyboardEvent *event, WSL_SDL_App *game) {
         if(event->keysym.scancode == SDL_SCANCODE_RIGHT) {
             game->right = true;
         }
+        if(event->keysym.scancode == SDL_SCANCODE_SPACE) {
+            game->fire = true;
+        }
+
         switch(event->keysym.sym) {
             case SDLK_q:
             case SDLK_ESCAPE:
@@ -63,7 +67,7 @@ void handle_keydown(SDL_KeyboardEvent *event, WSL_SDL_App *game) {
     }
 }
 
-void handle_keyup(SDL_KeyboardEvent *event, WSL_SDL_App *game) {
+void handle_keyup(SDL_KeyboardEvent *event, WSL_App *game) {
     if(event->repeat == 0) {
         if(event->keysym.scancode == SDL_SCANCODE_UP) {
             game->up = false;
@@ -76,6 +80,9 @@ void handle_keyup(SDL_KeyboardEvent *event, WSL_SDL_App *game) {
         }
         if(event->keysym.scancode == SDL_SCANCODE_RIGHT) {
             game->right = false;
+        }
+        if(event->keysym.scancode == SDL_SCANCODE_SPACE) {
+            game->fire = false;
         }
     }
 }

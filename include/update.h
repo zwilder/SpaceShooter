@@ -21,6 +21,6 @@
 #ifndef UPDATE_H
 #define UPDATE_H
 
-void update(WSL_SDL_App *game);
+void update(WSL_App *game);
 
 #endif //UPDATE_H

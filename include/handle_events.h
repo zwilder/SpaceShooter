@@ -21,8 +21,10 @@
 #ifndef HANDLE_EVENTS_H
 #define HANDLE_EVENTS_H
 
-void handle_events(WSL_SDL_App *game);
-void handle_keydown(SDL_KeyboardEvent *event, WSL_SDL_App *game);
-void handle_keyup(SDL_KeyboardEvent *event, WSL_SDL_App *game);
+#include <wsl_sdl.h>
+
+void handle_events(WSL_App *game);
+void handle_keydown(SDL_KeyboardEvent *event, WSL_App *game);
+void handle_keyup(SDL_KeyboardEvent *event, WSL_App *game);
 
 #endif //HANDLE_EVENTS_H
