@@ -23,8 +23,7 @@
 int main(int argc, char **argv) {
     WSL_App *game = wsl_init_sdl();
 
-    // Temporary
-    Entity *tmp = NULL;
+    // Temporary player creation
     SDL_Rect playerrect = {211, 941, 99 ,75};
     Entity *player = create_player(playerrect);
     player->x = (SCREEN_WIDTH / 2) - playerrect.w;

@@ -38,6 +38,8 @@ typedef struct {
     SDL_Surface *screen_surface;
     SDL_Renderer *renderer; // The SDL Renderer
     WSL_Texture *spritesheet; // Spritesheet with all the sprites
+    WSL_Texture *bg; // Background texture, will be an array eventually
+    int bgoffset; // Scrollin' background offset
     Entity *entities; // Linked list of all the entities
 
     // Temporary stuff

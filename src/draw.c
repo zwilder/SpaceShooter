@@ -22,10 +22,19 @@
 
 void draw(WSL_App *game) {
     Entity *tmp = NULL;
+    int x = 0, y = 0;
 
     // Clear the screen
-    SDL_SetRenderDrawColor(game->renderer, 0x00, 0x00, 0x00, 0xFF);
+    SDL_SetRenderDrawColor(game->renderer, 0xFF, 0x00, 0x00, 0xFF);
     SDL_RenderClear(game->renderer);
+
+    // Draw the background, tiled across the screen, scrolling along the offset
+    for(y = -1 * game->bg->h; y < SCREEN_HEIGHT; y += game->bg->h) {
+        for(x = 0; x < SCREEN_WIDTH; x += game->bg->w) {
+            //wsl_texture_render(game->bg,x,y);
+            wsl_texture_render(game->bg,x,y+game->bgoffset);
+        }
+    }
 
     // Render the entities
     tmp = game->entities;

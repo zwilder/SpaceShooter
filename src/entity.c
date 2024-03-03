@@ -50,7 +50,7 @@ Entity* create_player(SDL_Rect spriterect) {
     player->flags = EF_ALIVE | EF_PLAYER;
     player->update = &update_player;
     player->render = &entity_render;
-    player->speed = 4;
+    player->speed = 8;
     return player;
 }
 
@@ -88,9 +88,10 @@ void update_player(Entity *player, WSL_App *game) {
         proj = create_projectile(player, projrect);
         proj->flags |= EF_PLAYER;
         proj->dy = -1; // Projectile going up
+        proj->y -= 25;
         wsl_add_entity(game, proj); // Add projectile to list
         player->flags |= EF_COOLDOWN;
-        player->cooldown = 50;
+        player->cooldown = 25;
     }
 }
 

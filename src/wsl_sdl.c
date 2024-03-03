@@ -83,6 +83,7 @@ WSL_App* wsl_init_sdl(void) {
 
     app->running = true;
     app->entities = NULL;
+    app->bgoffset = 0;
     
     //Temporary stuff
     app->up = false;
@@ -122,6 +123,11 @@ bool wsl_load_media(WSL_App *app) {
     app->spritesheet = create_wsl_texture(app->renderer);
     if(!wsl_texture_load(app->spritesheet,"assets/spritesheet.png")) {
         printf("Unable to load assets/spritesheet.png!\n");
+        success = false;
+    }
+    app->bg = create_wsl_texture(app->renderer);
+    if(!wsl_texture_load(app->bg, "assets/black.png")) {
+        printf("Unable to load assets/black.png!\n");
         success = false;
     }
     return success;

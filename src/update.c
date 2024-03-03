@@ -30,7 +30,7 @@ void update(WSL_App *game) {
         entity = entity->next;
     }
 
-    // Cleanup list
+    // Cleanup entity list
     entity = game->entities;
     while(entity) {
         tmp = entity;
@@ -45,4 +45,8 @@ void update(WSL_App *game) {
             wsl_destroy_entity(game, tmp);
         }
     }
+
+    // Advance background
+    game->bgoffset += 2;
+    if(game->bgoffset > game->bg->h) game->bgoffset = 0;
 }
