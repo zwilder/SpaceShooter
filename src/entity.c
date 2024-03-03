@@ -18,32 +18,17 @@
 * along with Space Shooter.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SPACESHOOTER_H
-#define SPACESHOOTER_H
+#include <spaceshooter.h>
 
-/*****
- * System
- *****/
-#include <stdio.h>
-#include <stdbool.h>
+Entity* create_entity(SDL_Rect spriterect) {
+    Entity *entity = malloc(sizeof(Entity));
+    entity->spriterect = spriterect;
+    entity->x = 0;
+    entity->y = 0;
+    return entity;
+}
 
-/*****
- * SDL2
- *****/
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-
-/*****
- * Toolbox
- *****/
-
-/*****
- * Project
- *****/
-#include <defs.h>
-#include <wsl_sdl.h>
-#include <entity.h>
-#include <handle_events.h>
-#include <update.h>
-
-#endif //SPACESHOOTER_H
+void destroy_entity(Entity *entity) {
+    if(!entity) return;
+    free(entity);
+}

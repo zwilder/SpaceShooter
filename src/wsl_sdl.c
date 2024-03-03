@@ -79,16 +79,20 @@ WSL_SDL_App* wsl_init_sdl(void) {
     }
 
     app->running = true;
+    app->up = false;
+    app->down = false;
+    app->left = false;
+    app->right = false;
     return app;
 }
 
 void wsl_cleanup_sdl(WSL_SDL_App *app) {
     if(!app) return;
+    destroy_wsl_texture(app->spritesheet);
     SDL_DestroyRenderer(app->renderer);
     app->renderer = NULL;
     SDL_DestroyWindow(app->window);
     app->window = NULL;
-    destroy_wsl_texture(app->spritesheet);
     IMG_Quit();
     SDL_Quit();
     free(app);
@@ -117,7 +121,6 @@ void destroy_wsl_texture(WSL_Texture *t) {
     if(!t) return;
     if(t->tex) {
         SDL_DestroyTexture(t->tex);
-        t->tex = NULL;
     }
     free(t);
     t = NULL;
@@ -151,4 +154,26 @@ bool wsl_texture_load(WSL_Texture *t, char *path) {
 
     SDL_FreeSurface(loaded);
     return true;
+}
+
+void wsl_texture_render(WSL_Texture *t, int x, int y) {
+    SDL_Rect renderquad;
+    renderquad.x = x;
+    renderquad.y = y;
+    renderquad.w = t->w;
+    renderquad.h = t->h;
+    SDL_RenderCopy(t->renderer, t->tex, NULL, &renderquad);
+}
+
+void wsl_texture_render_rect(WSL_Texture *t, int x, int y, SDL_Rect *rect) {
+    SDL_Rect renderquad;
+    if(!rect) {
+        wsl_texture_render(t, x, y);
+    } else {
+        renderquad.x = x;
+        renderquad.y = y;
+        renderquad.w = rect->w;
+        renderquad.h = rect->h;
+        SDL_RenderCopy(t->renderer, t->tex, rect, &renderquad);
+    }
 }

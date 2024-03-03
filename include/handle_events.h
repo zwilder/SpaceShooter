@@ -18,32 +18,11 @@
 * along with Space Shooter.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SPACESHOOTER_H
-#define SPACESHOOTER_H
+#ifndef HANDLE_EVENTS_H
+#define HANDLE_EVENTS_H
 
-/*****
- * System
- *****/
-#include <stdio.h>
-#include <stdbool.h>
+void handle_events(WSL_SDL_App *game);
+void handle_keydown(SDL_KeyboardEvent *event, WSL_SDL_App *game);
+void handle_keyup(SDL_KeyboardEvent *event, WSL_SDL_App *game);
 
-/*****
- * SDL2
- *****/
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-
-/*****
- * Toolbox
- *****/
-
-/*****
- * Project
- *****/
-#include <defs.h>
-#include <wsl_sdl.h>
-#include <entity.h>
-#include <handle_events.h>
-#include <update.h>
-
-#endif //SPACESHOOTER_H
+#endif //HANDLE_EVENTS_H

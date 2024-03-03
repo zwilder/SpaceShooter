@@ -45,6 +45,10 @@ typedef struct {
     SDL_Renderer *renderer;
     WSL_Texture *spritesheet;
     bool running; // Will likely be replaced with bitflags tlater
+    bool up; // These 4 will be replaced
+    bool down;
+    bool left;
+    bool right;
 } WSL_SDL_App;
 
 /*****
@@ -60,5 +64,7 @@ bool wsl_load_media(WSL_SDL_App *app);
 WSL_Texture* create_wsl_texture(SDL_Renderer *renderer);
 void destroy_wsl_texture(WSL_Texture *t);
 bool wsl_texture_load(WSL_Texture *t, char *path);
+void wsl_texture_render(WSL_Texture *t, int x, int y);
+void wsl_texture_render_rect(WSL_Texture *t, int x, int y, SDL_Rect *rect);
 
 #endif //WSL_SDL_H

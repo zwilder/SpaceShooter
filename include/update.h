@@ -18,32 +18,9 @@
 * along with Space Shooter.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SPACESHOOTER_H
-#define SPACESHOOTER_H
+#ifndef UPDATE_H
+#define UPDATE_H
 
-/*****
- * System
- *****/
-#include <stdio.h>
-#include <stdbool.h>
+void update(WSL_SDL_App *game);
 
-/*****
- * SDL2
- *****/
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-
-/*****
- * Toolbox
- *****/
-
-/*****
- * Project
- *****/
-#include <defs.h>
-#include <wsl_sdl.h>
-#include <entity.h>
-#include <handle_events.h>
-#include <update.h>
-
-#endif //SPACESHOOTER_H
+#endif //UPDATE_H
