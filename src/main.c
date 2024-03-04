@@ -22,6 +22,7 @@
 
 int main(int argc, char **argv) {
     WSL_App *game = wsl_init_sdl();
+    init_genrand(time(NULL)); // Seed the pnrg
 
     // Temporary player creation
     SDL_Rect playerrect = {211, 941, 99 ,75};
@@ -45,7 +46,8 @@ int main(int argc, char **argv) {
         //Draw
         draw(game);
 
-        //Delay to set framerate?
+        //Delay to set framerate/game speed?
+        //I took this from the Parallel Realities SDL Tutorials
         SDL_Delay(16);
     }
 

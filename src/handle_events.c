@@ -40,49 +40,20 @@ void handle_events(WSL_App *game) {
 }
 
 void handle_keydown(SDL_KeyboardEvent *event, WSL_App *game) {
-    if(event->repeat == 0) {
-        if(event->keysym.scancode == SDL_SCANCODE_UP) {
-            game->up = true;
-        }
-        if(event->keysym.scancode == SDL_SCANCODE_DOWN) {
-            game->down = true;
-        }
-        if(event->keysym.scancode == SDL_SCANCODE_LEFT) {
-            game->left = true;
-        }
-        if(event->keysym.scancode == SDL_SCANCODE_RIGHT) {
-            game->right = true;
-        }
-        if(event->keysym.scancode == SDL_SCANCODE_SPACE) {
-            game->fire = true;
-        }
-
-        switch(event->keysym.sym) {
-            case SDLK_q:
-            case SDLK_ESCAPE:
-                game->running = false;
-                break;
-            default: break;
-        }
+    if((event->repeat == 0) && (event->keysym.scancode < MAX_KEYBOARD_KEYS)) {
+        game->keyboard[event->keysym.scancode] = true;
+    }
+    switch(event->keysym.sym) {
+        case SDLK_q:
+        case SDLK_ESCAPE:
+            game->running = false;
+            break;
+        default: break;
     }
 }
 
 void handle_keyup(SDL_KeyboardEvent *event, WSL_App *game) {
-    if(event->repeat == 0) {
-        if(event->keysym.scancode == SDL_SCANCODE_UP) {
-            game->up = false;
-        }
-        if(event->keysym.scancode == SDL_SCANCODE_DOWN) {
-            game->down = false;
-        }
-        if(event->keysym.scancode == SDL_SCANCODE_LEFT) {
-            game->left = false;
-        }
-        if(event->keysym.scancode == SDL_SCANCODE_RIGHT) {
-            game->right = false;
-        }
-        if(event->keysym.scancode == SDL_SCANCODE_SPACE) {
-            game->fire = false;
-        }
+    if((event->repeat == 0) && (event->keysym.scancode < MAX_KEYBOARD_KEYS)) {
+        game->keyboard[event->keysym.scancode] = false;
     }
 }

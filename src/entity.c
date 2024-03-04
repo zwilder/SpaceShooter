@@ -23,10 +23,12 @@
 Entity* create_entity(SDL_Rect spriterect) {
     Entity *entity = malloc(sizeof(Entity));
     entity->spriterect = spriterect;
+    entity->spritescale = 1.0;
     entity->x = 0;
     entity->y = 0;
     entity->dx = 0;
     entity->dy = 0;
+    entity->angle = 0;
     entity->cooldown = 0;
     entity->speed = 0;
     entity->next = NULL;
@@ -51,6 +53,7 @@ Entity* create_player(SDL_Rect spriterect) {
     player->update = &update_player;
     player->render = &entity_render;
     player->speed = 8;
+    player->spritescale = 0.75;
     return player;
 }
 
@@ -60,54 +63,61 @@ Entity* create_projectile(Entity *from, SDL_Rect spriterect) {
     proj->render = &entity_render;
     proj->update = &update_projectile;
     proj->speed = 16;
-    proj->x = from->x + (from->spriterect.w / 2);
+    proj->x = from->x + ((from->spriterect.w*from->spritescale) / 2);
     proj->y = from->y;
     return proj;
 }
 
-void update_player(Entity *player, WSL_App *game) {
-    Entity *proj = NULL;
-    SDL_Rect projrect = {845,0,13,57};
-
-    // Update position
-    if(game->up) player->y -= player->speed;
-    if(game->down) player->y += player->speed;
-    if(game->left) player->x -= player->speed;
-    if(game->right) player->x += player->speed;
-
-    if(player->x <= 0) player->x = 0;
-    if(player->x >= (SCREEN_WIDTH - player->spriterect.w)){
-        player->x = SCREEN_WIDTH - player->spriterect.w;
+Entity* create_asteroid(void) {
+    SDL_Rect spriterect;// = {651,447,43,43};
+    switch(mt_rand(1,4)) {
+        case 1:
+            spriterect.x = 224;
+            spriterect.y = 664;
+            spriterect.w = 101;
+            spriterect.h = 84;
+            break;
+        case 2:
+            spriterect.x = 0;
+            spriterect.y = 520;
+            spriterect.w = 120;
+            spriterect.h =98;
+            break;
+        case 3:
+            spriterect.x = 518;
+            spriterect.y = 810;
+            spriterect.w = 89;
+            spriterect.h = 82;
+            break;
+        case 4:
+            spriterect.x = 327;
+            spriterect.y = 452;
+            spriterect.w = 98;
+            spriterect.h = 96;
+            break;
+        default: break;
     }
-    if(player->y <= 0) player->y = 0;
-    if(player->y >= (SCREEN_HEIGHT - player->spriterect.h)) {
-        player->y = SCREEN_HEIGHT - player->spriterect.h;
-    }
-
-    if(game->fire && !((player->flags & EF_COOLDOWN) == EF_COOLDOWN)) {
-        proj = create_projectile(player, projrect);
-        proj->flags |= EF_PLAYER;
-        proj->dy = -1; // Projectile going up
-        proj->y -= 25;
-        wsl_add_entity(game, proj); // Add projectile to list
-        player->flags |= EF_COOLDOWN;
-        player->cooldown = 25;
-    }
-}
-
-void update_projectile(Entity *proj, WSL_App *game) {
-    // Kill the projectile if it's out of bounds
-    if((proj->x <= 0) || (proj->x >= SCREEN_WIDTH) || 
-            (proj->y <= 0) || (proj->y >= SCREEN_HEIGHT)) {
-        proj->flags &= ~EF_ALIVE;
-    }
-
-    // Update the projectiles position
-    proj->x += proj->dx * proj->speed;
-    proj->y += proj->dy * proj->speed;
+    Entity *asteroid = create_entity(spriterect);
+    asteroid->flags = EF_ALIVE | EF_ENEMY;
+    asteroid->render = &entity_render;
+    asteroid->update = &update_asteroid;
+    asteroid->speed = mt_rand(4,8);
+    asteroid->spritescale = mt_rand(75,150) / 100;
+    return asteroid;
 }
 
 void entity_render(Entity *entity, WSL_App *game) {
-    wsl_texture_render_rect(game->spritesheet, entity->x, entity->y, 
-            &entity->spriterect);
+    SDL_Rect renderquad;
+    renderquad.x = entity->x;
+    renderquad.y = entity->y;
+    renderquad.w = entity->spriterect.w * entity->spritescale;
+    renderquad.h = entity->spriterect.h * entity->spritescale;
+    if(entity->angle) {
+        SDL_RenderCopyEx(game->renderer, game->spritesheet->tex, 
+                &entity->spriterect, &renderquad,
+                entity->angle, NULL, SDL_FLIP_NONE);
+    } else {
+        SDL_RenderCopy(game->renderer, game->spritesheet->tex, 
+                &entity->spriterect, &renderquad);
+    }
 }

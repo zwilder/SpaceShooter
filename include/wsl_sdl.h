@@ -41,14 +41,9 @@ typedef struct {
     WSL_Texture *bg; // Background texture, will be an array eventually
     int bgoffset; // Scrollin' background offset
     Entity *entities; // Linked list of all the entities
-
-    // Temporary stuff
+    bool keyboard[MAX_KEYBOARD_KEYS]; // Keypress "flags" for all keys
     bool running; // Will likely be replaced with bitflags tlater
-    bool up; // These 4 will be replaced
-    bool down;
-    bool left;
-    bool right;
-    bool fire;
+    int asteroidspawn; // Asteroid spawn timer
 } WSL_App;
 
 /*****
@@ -69,5 +64,7 @@ void destroy_wsl_texture(WSL_Texture *t);
 bool wsl_texture_load(WSL_Texture *t, char *path);
 void wsl_texture_render(WSL_Texture *t, int x, int y);
 void wsl_texture_render_rect(WSL_Texture *t, int x, int y, SDL_Rect *rect);
+void wsl_texture_render_rect_scaled(WSL_Texture *t, int x, int y, 
+        SDL_Rect *rect, float scale);
 
 #endif //WSL_SDL_H

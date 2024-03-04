@@ -35,14 +35,16 @@ typedef enum {
 typedef struct Entity Entity;
 
 struct Entity {
-    int x; // Will probably replace with a Vec2i
-    int y;
-    int dx;
-    int dy;
+    float x; // Will probably replace with a float, or Vec2f even 
+    float y;
+    float dx;
+    float dy;
+    double angle;
     int speed; // How fast the entity is
-    int cooldown;
+    int cooldown; // Action cooldown
     int flags;
-    SDL_Rect spriterect; // Rect of the player sprite, spritesheet.xml
+    SDL_Rect spriterect; // Rect of the player sprite, off spritesheet.xml
+    float spritescale; // What scale the sprite should be rendered at
     Entity *next; // Entity is a linked list node, WSL_App contains the head
     Entity *prev;
     void (*update)(Entity*, WSL_App*); // Entity update function
@@ -54,9 +56,7 @@ void destroy_entity(Entity *entity);
 int count_entities(Entity *entity);
 Entity* create_player(SDL_Rect spriterect);
 Entity* create_projectile(Entity *from, SDL_Rect spriterect);
-
-void update_player(Entity *player, WSL_App *game);
-void update_projectile(Entity *proj, WSL_App *game);
+Entity* create_asteroid(void);
 
 void entity_render(Entity *entity, WSL_App *game);
 

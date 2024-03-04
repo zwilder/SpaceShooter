@@ -26,6 +26,7 @@
 WSL_App* wsl_init_sdl(void) {
     bool success = true;
     int imgflags = IMG_INIT_PNG;
+    int i = 0;
 
     WSL_App *app = malloc(sizeof(WSL_App));
 
@@ -85,13 +86,11 @@ WSL_App* wsl_init_sdl(void) {
     app->entities = NULL;
     app->bgoffset = 0;
     
-    //Temporary stuff
-    app->up = false;
-    app->down = false;
-    app->left = false;
-    app->right = false;
-    app->fire = false;
-
+    // Set keyboard flags to false
+    for(i = 0; i < MAX_KEYBOARD_KEYS; i++) {
+        app->keyboard[i] = false;
+    }
+    
     return app;
 }
 
@@ -126,8 +125,8 @@ bool wsl_load_media(WSL_App *app) {
         success = false;
     }
     app->bg = create_wsl_texture(app->renderer);
-    if(!wsl_texture_load(app->bg, "assets/black.png")) {
-        printf("Unable to load assets/black.png!\n");
+    if(!wsl_texture_load(app->bg, "assets/darkPurple.png")) {
+        printf("Unable to load assets/darkPurple.png!\n");
         success = false;
     }
     return success;
@@ -257,6 +256,19 @@ void wsl_texture_render_rect(WSL_Texture *t, int x, int y, SDL_Rect *rect) {
         renderquad.y = y;
         renderquad.w = rect->w;
         renderquad.h = rect->h;
+        SDL_RenderCopy(t->renderer, t->tex, rect, &renderquad);
+    }
+}
+
+void wsl_texture_render_rect_scaled(WSL_Texture *t, int x, int y, SDL_Rect *rect, float scale) {
+    SDL_Rect renderquad;
+    if(!rect) {
+        wsl_texture_render(t, x, y);
+    } else {
+        renderquad.x = x;
+        renderquad.y = y;
+        renderquad.w = (rect->w) * scale;
+        renderquad.h = (rect->h) * scale;
         SDL_RenderCopy(t->renderer, t->tex, rect, &renderquad);
     }
 }

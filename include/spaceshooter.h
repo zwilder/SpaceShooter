@@ -36,6 +36,7 @@
 /*****
  * Toolbox
  *****/
+#include <mt19937.h>
 
 /*****
  * Project

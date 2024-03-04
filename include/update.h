@@ -22,5 +22,9 @@
 #define UPDATE_H
 
 void update(WSL_App *game);
+void update_player(Entity *player, WSL_App *game);
+void update_projectile(Entity *proj, WSL_App *game);
+void update_asteroid(Entity *ast, WSL_App *game);
 
+void spawn_asteroid(WSL_App *game);
 #endif //UPDATE_H

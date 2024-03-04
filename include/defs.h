@@ -24,4 +24,6 @@
 #define SCREEN_WIDTH 1024
 #define SCREEN_HEIGHT 768
 
+#define MAX_KEYBOARD_KEYS 350
+
 #endif //DEFS_H
