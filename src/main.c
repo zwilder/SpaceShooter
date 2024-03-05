@@ -19,9 +19,21 @@
 */
 
 #include <spaceshooter.h>
+#include <sys/time.h>
+
+long current_ms(void) {
+    // Helper function to return the current time in ms
+    struct timeval tp;
+    gettimeofday(&tp, NULL);
+    return ((tp.tv_sec * 1000) + (tp.tv_usec / 1000));
+}
 
 int main(int argc, char **argv) {
-    WSL_App *game = wsl_init_sdl();
+    long lag = 0, current = 0, elapsed = 0;
+    long prev = current_ms();
+    long msperframe = 16; // 16ms = ~60fps, 33ms = ~30fps
+    WSL_App *game = wsl_init_sdl(); // Start SDL
+
     init_genrand(time(NULL)); // Seed the pnrg
 
     // Temporary player creation
@@ -36,19 +48,24 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    /* Basic game loop, straight outta Game Programming Patterns */
     while(game->running) {
+        current = current_ms();
+        elapsed = current - prev;
+        prev = current;
+        lag += elapsed;
+
         //Handle events
         handle_events(game);
 
         //Update
-        update(game);
+        while(lag >= msperframe) {
+            lag -= msperframe;
+            update(game);
+        }
 
         //Draw
         draw(game);
-
-        //Delay to set framerate/game speed?
-        //I took this from the Parallel Realities SDL Tutorials
-        SDL_Delay(16);
     }
 
     wsl_cleanup_sdl(game);

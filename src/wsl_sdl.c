@@ -225,7 +225,13 @@ bool wsl_texture_load(WSL_Texture *t, char *path) {
                 path, IMG_GetError());
         return false;
     }
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"); // 0: nearest, 1: linear, 2: best
+
+    // 0: nearest, 1: linear, 2: best
+    if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
+    {
+        printf("Warning: Linear texture filtering not enabled!");
+    }
+
     SDL_SetColorKey(loaded, SDL_TRUE, SDL_MapRGB(loaded->format, 0, 0xFF, 0xFF));
     t->tex = SDL_CreateTextureFromSurface(t->renderer, loaded);
     if(!t->tex) {
