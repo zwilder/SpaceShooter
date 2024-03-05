@@ -36,28 +36,48 @@ typedef struct Entity Entity;
 
 struct Entity {
     float x; // Will probably replace with a float, or Vec2f even 
-    float y;
-    float dx;
+    float y; // Entity's x,y coordinates on the screen
+    float dx; // The change (delta) in the x,y coordinates
     float dy;
-    double angle;
+    double angle; // Angle the sprite is rendered at
     int speed; // How fast the entity is
-    int cooldown; // Action cooldown
-    int flags;
+    int cooldown; // Action cooldown timer
+    int flags; // EntityFlags
     SDL_Rect spriterect; // Rect of the player sprite, off spritesheet.xml
     float spritescale; // What scale the sprite should be rendered at
     Entity *next; // Entity is a linked list node, WSL_App contains the head
-    Entity *prev;
+    Entity *prev; // Why is it double linked? Habit I suppose. 
+
     void (*update)(Entity*, WSL_App*); // Entity update function
     void (*render)(Entity*, WSL_App*); // Entity render function
+    void (*deathfunc)(Entity*, WSL_App*); // Function to be called on entity destruction
 };
 
+/*****
+ * Entity Creation/Destruction
+ *****/
 Entity* create_entity(SDL_Rect spriterect);
 void destroy_entity(Entity *entity);
-int count_entities(Entity *entity);
 Entity* create_player(SDL_Rect spriterect);
 Entity* create_projectile(Entity *from, SDL_Rect spriterect);
 Entity* create_asteroid(void);
+void spawn_asteroid(WSL_App *game);
 
+/*****
+ * Entity utility functions
+ *****/
+int count_entities(Entity *entity);
+SDL_Rect get_hitbox(Entity *entity);
+bool entities_are_player(Entity *a, Entity *b);
+bool entities_are_enemy(Entity *a, Entity *b);
+bool entity_is_player(Entity *a);
+bool entity_is_enemy(Entity *a);
+bool check_collision_rect(SDL_Rect a, SDL_Rect b);
+
+/*****
+ * Entity drawing functions
+ * (Might move to draw.h)
+ *****/
 void entity_render(Entity *entity, WSL_App *game);
 
 #endif //ENTITY_H

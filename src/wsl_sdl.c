@@ -85,6 +85,7 @@ WSL_App* wsl_init_sdl(void) {
     app->running = true;
     app->entities = NULL;
     app->bgoffset = 0;
+    app->asteroidspawn = 50;
     
     // Set keyboard flags to false
     for(i = 0; i < MAX_KEYBOARD_KEYS; i++) {
@@ -99,6 +100,7 @@ void wsl_cleanup_sdl(WSL_App *app) {
     if(!app) return;
 
     // Cleanup SDL
+    destroy_wsl_texture(app->bg);
     destroy_wsl_texture(app->spritesheet);
     SDL_DestroyRenderer(app->renderer);
     app->renderer = NULL;
@@ -223,7 +225,7 @@ bool wsl_texture_load(WSL_Texture *t, char *path) {
                 path, IMG_GetError());
         return false;
     }
-
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"); // 0: nearest, 1: linear, 2: best
     SDL_SetColorKey(loaded, SDL_TRUE, SDL_MapRGB(loaded->format, 0, 0xFF, 0xFF));
     t->tex = SDL_CreateTextureFromSurface(t->renderer, loaded);
     if(!t->tex) {

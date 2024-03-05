@@ -23,6 +23,7 @@
 void draw(WSL_App *game) {
     Entity *tmp = NULL;
     int x = 0, y = 0;
+    //SDL_Rect hitbox;
 
     // Clear the screen
     SDL_SetRenderDrawColor(game->renderer, 0xFF, 0x00, 0x00, 0xFF);
@@ -40,6 +41,8 @@ void draw(WSL_App *game) {
     tmp = game->entities;
     while(tmp) {
         tmp->render(tmp, game);
+        //hitbox = get_hitbox(tmp);
+        //SDL_RenderDrawRect(game->renderer, &hitbox);
         tmp = tmp->next;
     }
 
