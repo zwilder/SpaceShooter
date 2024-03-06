@@ -29,7 +29,8 @@ typedef enum {
     EF_PLAYER       = 1 << 2,
     EF_ENEMY        = 1 << 3,
     EF_COOLDOWN     = 1 << 4,
-    EF_PROJECTILE   = 1 << 5
+    EF_PROJECTILE   = 1 << 5,
+    EF_OOB          = 1 << 6
 } EntityFlags;
 
 typedef struct Entity Entity;
@@ -42,7 +43,10 @@ struct Entity {
     double angle; // Angle the sprite is rendered at
     int speed; // How fast the entity is
     int cooldown; // Action cooldown timer
+    int particletimer; // Particle spawn timer
+    int frame; // Animation frame timer
     int flags; // EntityFlags
+    uint8_t rgba[4];
     SDL_Rect spriterect; // Rect of the player sprite, off spritesheet.xml
     float spritescale; // What scale the sprite should be rendered at
     Entity *next; // Entity is a linked list node, WSL_App contains the head
@@ -62,6 +66,12 @@ Entity* create_player(SDL_Rect spriterect);
 Entity* create_projectile(Entity *from, SDL_Rect spriterect);
 Entity* create_asteroid(void);
 void spawn_asteroid(WSL_App *game);
+void spawn_explosion(int x, int y, WSL_App *game);
+Entity* create_particle_test(Entity *from, WSL_App *game);
+void explosive_death(Entity *entity, WSL_App *game);
+
+void update_particle(Entity *particle, WSL_App *game); //Temporarily here
+void render_particle_test(Entity *particle, WSL_App *game); //Temporarily here
 
 /*****
  * Entity utility functions

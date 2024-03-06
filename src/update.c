@@ -62,6 +62,7 @@ void update(WSL_App *game) {
 
 void update_player(Entity *player, WSL_App *game) {
     Entity *proj = NULL;
+    Entity *particle = NULL;
     SDL_Rect projrect = {845,0,13,57};
     player->dx = player->dy = 0; // 0 both dx/dy
     int w = player->spriterect.w * player->spritescale;
@@ -125,6 +126,20 @@ void update_player(Entity *player, WSL_App *game) {
         player->flags |= EF_COOLDOWN; // Turn on cooldown flag
         player->cooldown = 25; // Start cooldown timer, entities should have a "firerate"
     }
+
+    if(player->particletimer <= 0) {
+        particle = create_particle_test(player, game);
+        particle->y += player->spriterect.h * player->spritescale;
+        //particle->x = player->x;
+        particle->x += (player->spriterect.w * player->spritescale) / 2;
+        //particle->rgba[1] = 0;
+        //particle->rgba[2] = 0;
+        particle->rgba[3] = 125;
+        wsl_add_entity(game, particle);
+        player->particletimer = 5;
+    } else {
+        player->particletimer -= 1;
+    }
 }
 
 void update_projectile(Entity *proj, WSL_App *game) {
@@ -166,6 +181,7 @@ void update_asteroid(Entity *ast, WSL_App *game) {
     if((ast->x <= 0) || (ast->x >= SCREEN_WIDTH) || 
             (ast->y >= SCREEN_HEIGHT)) {
         ast->flags &= ~EF_ALIVE;
+        ast->flags |= EF_OOB;
     }
 
     if(!((ast->flags & EF_COOLDOWN) == EF_COOLDOWN)) {

@@ -32,12 +32,15 @@ Entity* create_entity(SDL_Rect spriterect) {
     Entity *entity = malloc(sizeof(Entity));
     entity->spriterect = spriterect;
     entity->spritescale = 1.0;
+    entity->frame = 0;
     entity->x = 0;
     entity->y = 0;
     entity->dx = 0;
     entity->dy = 0;
+    entity->rgba[0]=entity->rgba[1]=entity->rgba[2]=entity->rgba[3]=255;
     entity->angle = 0;
     entity->cooldown = 0;
+    entity->particletimer = 0;
     entity->speed = 0;
     entity->next = NULL;
     entity->prev = NULL;
@@ -154,10 +157,139 @@ void spawn_asteroid(WSL_App *game) {
     ast->x = x;
     ast->y = 0;
     ast->dy = 1;
+    ast->deathfunc = &explosive_death;
     wsl_add_entity(game, ast); // Add asteroid to game list
     game->asteroidspawn = mt_rand(15,55); // Set timer to spawn a new asteroid
 }
 
+void explosive_death(Entity *entity, WSL_App *game) {
+    if(!((entity->flags & EF_OOB) == EF_OOB)) {
+        spawn_explosion(entity->x, entity->y, game);
+    }
+}
+
+Entity* create_particle_test(Entity *from, WSL_App *game) {
+    /* This mess of a function is basically me playing with ideas. */
+    //SDL_Rect spriterect = {628,681,25,24}; //star1
+    SDL_Rect spriterect = {222,84,25,24}; //star2
+    //SDL_Rect spriterect = {827,125,16,40}; //fire00
+	//<SubTexture name="star1.png" x="628" y="681" width="25" height="24"/>
+	//<SubTexture name="star2.png" x="222" y="84" width="25" height="24"/>
+	//<SubTexture name="star3.png" x="576" y="300" width="24" height="24"/>
+	//<SubTexture name="fire00.png" x="827" y="125" width="16" height="40"/>
+    Entity *particle = create_entity(spriterect);
+    // Randomly create a particle around the "from" entity
+    particle->x = from->x;// + (mt_rand(-10,10));
+    particle->y = from->y;// + (mt_rand(20,30));
+    particle->frame = mt_rand(0,5); // Start the frame at a random spot 
+    particle->flags = EF_ALIVE;
+    particle->rgba[3] = 75; // Semi transparent
+    particle->spritescale = 0.75;
+    //particle->angle = 180;
+    // Randomly R/G/B for generic particle - may have "special" particle
+    // functions to create them in certain colors?
+    switch(mt_rand(1,3)) {
+        case 1:
+            //Blue
+            particle->rgba[0] = 0;
+            particle->rgba[1] = 0;
+            break;
+        case 2:
+            //Green
+            particle->rgba[0] = 0;
+            particle->rgba[2] = 0;
+            break;
+        default:
+            //Red
+            particle->rgba[1] = 0;
+            particle->rgba[2] = 0;
+            break;
+    }
+    switch(mt_rand(1,3)) {
+        case 1: particle->dx = mt_rand(1,2) / -2; break; //left
+        case 2: particle->dx = mt_rand(1,2) / 2; break; //right
+        default: particle->dx = 0; break; //straight;
+    }
+    particle->dy = 1;
+    particle->speed = 2;
+    particle->update = &update_particle;
+    particle->render = &render_particle_test;
+    return particle;
+}
+
+void update_particle(Entity *particle, WSL_App *game) {
+    particle->frame++;
+    particle->x += particle->dx * particle->speed;
+    particle->y += particle->dy * particle->speed;
+    //particle->x += mt_rand(-10,10); //wiggle
+    if(particle->frame > 10) {
+        //particle->y += 5;
+    }
+    
+    //particle->angle += 15;
+    if(particle->frame > 20) {
+        particle->flags &= ~EF_ALIVE;
+    }
+}
+
+void render_particle_test(Entity *particle, WSL_App *game) {
+    uint8_t ogcolor[4] = {particle->rgba[0], particle->rgba[1],
+        particle->rgba[2], particle->rgba[3]};
+   
+    if(particle->frame % 3 == 0) {
+        //Render the particle as white every other frame for **shimmer**
+        particle->rgba[0] = 255;
+        particle->rgba[1] = 255;
+        particle->rgba[2] = 255;
+        particle->rgba[3] = 255;
+        entity_render(particle, game);
+        particle->rgba[0] = ogcolor[0];
+        particle->rgba[1] = ogcolor[1];
+        particle->rgba[2] = ogcolor[2];
+        particle->rgba[3] = ogcolor[3];
+    } else {
+        entity_render(particle,game);
+    }
+}
+
+void spawn_explosion(int x, int y, WSL_App *game) {
+    //SDL_Rect spriterect = {222,84,25,24}; //star2
+    //SDL_Rect spriterect = {628,681,25,24}; //star1
+    SDL_Rect spriterect = {576,300,24,24}; //star3
+	//<SubTexture name="star1.png" x="628" y="681" width="25" height="24"/>
+	//<SubTexture name="star2.png" x="222" y="84" width="25" height="24"/>
+	//<SubTexture name="star3.png" x="576" y="300" width="24" height="24"/>
+    int i = 0;
+    float angle = 0.0;
+    float radius = 0.0;
+    // Adjust these 
+    int num_particles = 25;
+    int max_radius = 20;
+    int min_velocity = 0;
+    int max_velocity = 10;
+    for(i = 0; i < num_particles; i++) {
+        Entity *particle = create_entity(spriterect);
+        angle = 2*M_PI*(float)genrand_real1();
+        radius = max_radius*(float)genrand_real1();
+        particle->flags = EF_ALIVE;
+        // Polar to cartesian coordinates
+        particle->x = x + radius*(float)cos(angle); // x=r*cosA
+        particle->y = y + radius*(float)sin(angle); // y=r*sinA
+        particle->dx = min_velocity + (max_velocity*genrand_real1());
+        if(mt_bool()) particle->dx *= -1;
+        particle->dy = min_velocity + (max_velocity*genrand_real1());
+        if(mt_bool()) particle->dy *= -1;
+        particle->speed = 1;
+        particle->spritescale = 0.50;
+        particle->rgba[0] = mt_rand(150,255);
+        particle->rgba[1] = mt_rand(0,75);
+        particle->rgba[2] = mt_rand(0,25);
+        particle->rgba[3] = mt_rand(25,200);
+        particle->update = &update_particle;
+        particle->render = &entity_render;
+        wsl_add_entity(game, particle); // Add particle to game list
+    }
+}
 /*****
  * Entity utility functions
  *****/
@@ -251,6 +383,9 @@ void entity_render(Entity *entity, WSL_App *game) {
     renderquad.y = entity->y;
     renderquad.w = entity->spriterect.w * entity->spritescale;
     renderquad.h = entity->spriterect.h * entity->spritescale;
+    SDL_SetTextureColorMod(game->spritesheet->tex, entity->rgba[0], entity->rgba[1],
+            entity->rgba[2]);
+    SDL_SetTextureAlphaMod(game->spritesheet->tex, entity->rgba[3]);
     if(entity->angle) {
         SDL_RenderCopyEx(game->renderer, game->spritesheet->tex, 
                 &entity->spriterect, &renderquad,
