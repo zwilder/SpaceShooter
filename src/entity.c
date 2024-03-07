@@ -157,14 +157,24 @@ void spawn_asteroid(WSL_App *game) {
     ast->x = x;
     ast->y = 0;
     ast->dy = 1;
-    ast->deathfunc = &explosive_death;
+    ast->deathfunc = &firework_death;
     wsl_add_entity(game, ast); // Add asteroid to game list
     game->asteroidspawn = mt_rand(15,55); // Set timer to spawn a new asteroid
 }
 
-void explosive_death(Entity *entity, WSL_App *game) {
+void firework_death(Entity *entity, WSL_App *game) {
     if(!((entity->flags & EF_OOB) == EF_OOB)) {
-        spawn_explosion(entity->x, entity->y, game);
+        switch(mt_rand(1,3)) {
+            case 1:
+                spawn_green_explosion(entity->x, entity->y, game);
+                break;
+            case 2:
+                spawn_purple_explosion(entity->x, entity->y, game);
+                break;
+            default:
+                spawn_explosion(entity->x, entity->y, game);
+                break;
+        }
     }
 }
 
@@ -226,8 +236,10 @@ void update_particle(Entity *particle, WSL_App *game) {
         //particle->y += 5;
     }
     
-    //particle->angle += 15;
-    if(particle->frame > 20) {
+    if(particle->angle) {
+        particle->angle += 45;
+    }
+    if(particle->frame > 25) {
         particle->flags &= ~EF_ALIVE;
     }
 }
@@ -253,42 +265,110 @@ void render_particle_test(Entity *particle, WSL_App *game) {
 }
 
 void spawn_explosion(int x, int y, WSL_App *game) {
-    //SDL_Rect spriterect = {222,84,25,24}; //star2
-    //SDL_Rect spriterect = {628,681,25,24}; //star1
-    SDL_Rect spriterect = {576,300,24,24}; //star3
-	//<SubTexture name="star1.png" x="628" y="681" width="25" height="24"/>
-	//<SubTexture name="star2.png" x="222" y="84" width="25" height="24"/>
-	//<SubTexture name="star3.png" x="576" y="300" width="24" height="24"/>
-    int i = 0;
-    float angle = 0.0;
-    float radius = 0.0;
-    // Adjust these 
     int num_particles = 25;
     int max_radius = 20;
     int min_velocity = 0;
     int max_velocity = 10;
+    int i = 0;
+    //SDL_Rect spriterect = {222,84,25,24}; //star2
+    //SDL_Rect spriterect = {628,681,25,24}; //star1
+    SDL_Rect spriterect = {576,300,24,24}; //star3
     for(i = 0; i < num_particles; i++) {
-        Entity *particle = create_entity(spriterect);
-        angle = 2*M_PI*(float)genrand_real1();
-        radius = max_radius*(float)genrand_real1();
-        particle->flags = EF_ALIVE;
-        // Polar to cartesian coordinates
-        particle->x = x + radius*(float)cos(angle); // x=r*cosA
-        particle->y = y + radius*(float)sin(angle); // y=r*sinA
-        particle->dx = min_velocity + (max_velocity*genrand_real1());
-        if(mt_bool()) particle->dx *= -1;
-        particle->dy = min_velocity + (max_velocity*genrand_real1());
-        if(mt_bool()) particle->dy *= -1;
-        particle->speed = 1;
-        particle->spritescale = 0.50;
-        particle->rgba[0] = mt_rand(150,255);
-        particle->rgba[1] = mt_rand(0,75);
-        particle->rgba[2] = mt_rand(0,25);
-        particle->rgba[3] = mt_rand(25,200);
-        particle->update = &update_particle;
-        particle->render = &entity_render;
-        wsl_add_entity(game, particle); // Add particle to game list
+        spawn_explosion_particle(x, y, game, spriterect,
+                0.75, max_radius, min_velocity, max_velocity,
+                mt_rand(200,255),mt_rand(0,75),mt_rand(0,25),mt_rand(25,200));
     }
+}
+
+void spawn_purple_explosion(int x, int y, WSL_App *game) {
+    int num_particles = 25;
+    int max_radius = 20;
+    int min_velocity = 0;
+    int max_velocity = 10;
+    int i = 0;
+    //SDL_Rect spriterect = {222,84,25,24}; //star2
+    //SDL_Rect spriterect = {628,681,25,24}; //star1
+    SDL_Rect spriterect = {576,300,24,24}; //star3
+    for(i = 0; i < num_particles; i++) {
+        spawn_explosion_particle(x, y, game, spriterect,
+                0.75, max_radius, min_velocity, max_velocity,
+                mt_rand(200,255),mt_rand(0,75),mt_rand(200,255),mt_rand(25,200));
+    }
+}
+
+void spawn_green_explosion(int x, int y, WSL_App *game) {
+    int num_particles = 25;
+    int max_radius = 20;
+    int min_velocity = 0;
+    int max_velocity = 10;
+    int i = 0;
+    //SDL_Rect spriterect = {222,84,25,24}; //star2
+    //SDL_Rect spriterect = {628,681,25,24}; //star1
+    SDL_Rect spriterect = {576,300,24,24}; //star3
+    for(i = 0; i < num_particles; i++) {
+        spawn_explosion_particle(x, y, game, spriterect,
+                0.75, max_radius, min_velocity, max_velocity,
+                mt_rand(0,25),mt_rand(200,255),mt_rand(0,75),mt_rand(25,200));
+    }
+}
+
+void spawn_asteroid_explosion(int x, int y, WSL_App *game) {
+    int num_particles = 25;
+    int max_radius = 20;
+    int min_velocity = 1;
+    int max_velocity = 10;
+    int i = 0;
+    SDL_Rect spriterect = {346,814,18,18}; //meteorBrown_tiny1
+    for(i = 0; i < num_particles; i++) {
+        spawn_explosion_particle(x, y, game, spriterect,
+                1.0, max_radius, min_velocity, max_velocity,
+                255,255,255,mt_rand(25,200));
+    }
+}
+
+void spawn_explosion_particle(int x, int y, WSL_App *game, SDL_Rect spriterect,
+        float spritescale, int max_radius, int min_velocity, int max_velocity,
+        uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+    /*
+     * This beautiful, math filled function creates a single particle and a
+     * random distance about an origin point, and gives it a random velocity and
+     * a random trajectory to move. It should be called by other functions
+     * looking for an explosive effect multiple times in a loop for best
+     * results.
+     * - x,y: origin point that particles are spawning from
+     * - game: pointer to the game object, which holds the list of entities
+     * - spriterect: the rectangle containg the sprite on the game's spritesheet
+     * - spritescale: how big the sprite in the spriterect should be rendered
+     * - max_radius: how far from the origin the particle can appear
+     * - min_velocity/max_velocity: The slowest and fastest a particle can move
+     *   away from the origin
+     * - r/g/b/a: red, green, blue, alpha colors - [0,255]
+     */
+    float angle = 0.0;
+    float radius = 0.0;
+    Entity *particle = create_entity(spriterect); // create generic entity
+    angle = 2*M_PI*(float)genrand_real1(); // angle to move about origin x,y
+    radius = max_radius*(float)genrand_real1(); // random distance from origin
+    particle->flags = EF_ALIVE; // Particles gotta start alive
+    // Polar to cartesian coordinates
+    particle->x = x + radius*(float)cos(angle); // x=r*cosA
+    particle->y = y + radius*(float)sin(angle); // y=r*sinA
+    //Random velocity along the x axis
+    particle->dx = min_velocity + (max_velocity*genrand_real1());
+    if(mt_bool()) particle->dx *= -1; // about half move left, other half right
+    //Random velocity along the y axis
+    particle->dy = min_velocity + (max_velocity*genrand_real1());
+    if(mt_bool()) particle->dy *= -1; // about half move up, other half down
+    particle->speed = 1; // Basic speed
+    particle->angle = 45; // Angle here is the SPRITE angle, should be passed in?
+    particle->spritescale = spritescale; // Scale of the sprite used for the particle
+    particle->rgba[0] = r; // Red, green, blue, and alpha used for the particle
+    particle->rgba[1] = g;
+    particle->rgba[2] = b;
+    particle->rgba[3] = a;
+    particle->update = &update_particle; // Update function
+    particle->render = &entity_render; // Basic entity render
+    wsl_add_entity(game, particle); // Add particle to game list
 }
 /*****
  * Entity utility functions

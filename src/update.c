@@ -127,6 +127,7 @@ void update_player(Entity *player, WSL_App *game) {
         player->cooldown = 25; // Start cooldown timer, entities should have a "firerate"
     }
 
+    /*
     if(player->particletimer <= 0) {
         particle = create_particle_test(player, game);
         particle->y += player->spriterect.h * player->spritescale;
@@ -140,6 +141,7 @@ void update_player(Entity *player, WSL_App *game) {
     } else {
         player->particletimer -= 1;
     }
+    */
 }
 
 void update_projectile(Entity *proj, WSL_App *game) {

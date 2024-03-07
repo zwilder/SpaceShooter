@@ -65,10 +65,18 @@ void destroy_entity(Entity *entity);
 Entity* create_player(SDL_Rect spriterect);
 Entity* create_projectile(Entity *from, SDL_Rect spriterect);
 Entity* create_asteroid(void);
+
+void firework_death(Entity *entity, WSL_App *game);
+
 void spawn_asteroid(WSL_App *game);
+void spawn_explosion_particle(int x, int y, WSL_App *game, SDL_Rect spriterect,
+        float spritescale, int max_radius, int min_velocity, int max_velocity,
+        uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 void spawn_explosion(int x, int y, WSL_App *game);
+void spawn_purple_explosion(int x, int y, WSL_App *game);
+void spawn_green_explosion(int x, int y, WSL_App *game);
+void spawn_asteroid_explosion(int x, int y, WSL_App *game);
 Entity* create_particle_test(Entity *from, WSL_App *game);
-void explosive_death(Entity *entity, WSL_App *game);
 
 void update_particle(Entity *particle, WSL_App *game); //Temporarily here
 void render_particle_test(Entity *particle, WSL_App *game); //Temporarily here
