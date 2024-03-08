@@ -127,8 +127,8 @@ bool wsl_load_media(WSL_App *app) {
         success = false;
     }
     app->bg = create_wsl_texture(app->renderer);
-    if(!wsl_texture_load(app->bg, "assets/darkPurple.png")) {
-        printf("Unable to load assets/darkPurple.png!\n");
+    if(!wsl_texture_load(app->bg, "assets/black.png")) {
+        printf("Unable to load assets/black.png!\n");
         success = false;
     }
     return success;

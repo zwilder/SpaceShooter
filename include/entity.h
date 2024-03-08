@@ -43,10 +43,11 @@ struct Entity {
     double angle; // Angle the sprite is rendered at
     int speed; // How fast the entity is
     int cooldown; // Action cooldown timer
-    int particletimer; // Particle spawn timer
+    //int particletimer; // Particle spawn timer
     int frame; // Animation frame timer
     int flags; // EntityFlags
-    uint8_t rgba[4];
+    int health;
+    uint8_t rgba[4]; // Red, green, blue, alpha 
     SDL_Rect spriterect; // Rect of the player sprite, off spritesheet.xml
     float spritescale; // What scale the sprite should be rendered at
     Entity *next; // Entity is a linked list node, WSL_App contains the head
@@ -54,35 +55,18 @@ struct Entity {
 
     void (*update)(Entity*, WSL_App*); // Entity update function
     void (*render)(Entity*, WSL_App*); // Entity render function
+    void (*take_damage)(Entity*, WSL_App*); // What do when taking damage
     void (*deathfunc)(Entity*, WSL_App*); // Function to be called on entity destruction
 };
 
 /*****
- * Entity Creation/Destruction
+ * Entity Creation/Destruction - entity.c
  *****/
 Entity* create_entity(SDL_Rect spriterect);
 void destroy_entity(Entity *entity);
-Entity* create_player(SDL_Rect spriterect);
-Entity* create_projectile(Entity *from, SDL_Rect spriterect);
-Entity* create_asteroid(void);
-
-void firework_death(Entity *entity, WSL_App *game);
-
-void spawn_asteroid(WSL_App *game);
-void spawn_explosion_particle(int x, int y, WSL_App *game, SDL_Rect spriterect,
-        float spritescale, int max_radius, int min_velocity, int max_velocity,
-        uint8_t r, uint8_t g, uint8_t b, uint8_t a);
-void spawn_explosion(int x, int y, WSL_App *game);
-void spawn_purple_explosion(int x, int y, WSL_App *game);
-void spawn_green_explosion(int x, int y, WSL_App *game);
-void spawn_asteroid_explosion(int x, int y, WSL_App *game);
-Entity* create_particle_test(Entity *from, WSL_App *game);
-
-void update_particle(Entity *particle, WSL_App *game); //Temporarily here
-void render_particle_test(Entity *particle, WSL_App *game); //Temporarily here
 
 /*****
- * Entity utility functions
+ * Entity utility functions - entity.c
  *****/
 int count_entities(Entity *entity);
 SDL_Rect get_hitbox(Entity *entity);
@@ -93,9 +77,46 @@ bool entity_is_enemy(Entity *a);
 bool check_collision_rect(SDL_Rect a, SDL_Rect b);
 
 /*****
- * Entity drawing functions
- * (Might move to draw.h)
+ * Entity drawing functions - entity.c
  *****/
 void entity_render(Entity *entity, WSL_App *game);
+
+/*****
+ * Player entity functions - entity_player.c
+ *****/
+Entity* create_player(SDL_Rect spriterect);
+void update_player(Entity *player, WSL_App *game);
+
+/*****
+ * Projectile entity functions - entity_projectile.c
+ *****/
+Entity* create_projectile(Entity *from, SDL_Rect spriterect);
+void update_projectile(Entity *proj, WSL_App *game);
+
+/*****
+ * Asteroid entity funcitons - entity_asteroid.c
+ *****/
+Entity* create_asteroid(void);
+void spawn_asteroid(WSL_App *game);
+void asteroid_death(Entity *entity, WSL_App *game);
+void update_asteroid(Entity *asteroid, WSL_App *game);
+void asteroid_damage(Entity *asteroid, WSL_App *game);
+
+/*****
+ * Explosion particles - entity_explosions.c
+ *****/
+void spawn_explosion_particle(int x, int y, WSL_App *game, SDL_Rect spriterect,
+        float spritescale, int max_radius, int min_velocity, int max_velocity,
+        uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+void spawn_explosion(int x, int y, WSL_App *game);
+void spawn_purple_explosion(int x, int y, WSL_App *game);
+void spawn_green_explosion(int x, int y, WSL_App *game);
+void spawn_asteroid_explosion(int x, int y, WSL_App *game);
+void spawn_random_color_explosion(int x, int y, WSL_App *game);
+void update_particle(Entity *particle, WSL_App *game);
+void particle_death(Entity *particle, WSL_App *game);
+Entity* create_particle_test(Entity *from, WSL_App *game);
+void render_particle_test(Entity *particle, WSL_App *game);
+void firework_death(Entity *entity, WSL_App *game);
 
 #endif //ENTITY_H
