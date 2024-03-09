@@ -61,6 +61,7 @@ void spawn_explosion_particle(int x, int y, WSL_App *game, SDL_Rect spriterect,
     particle->rgba[3] = a;
     particle->update = &update_particle; // Update function
     particle->render = &entity_render; // Basic entity render
+    particle->deathfunc = &particle_death; // Gravity decay
     wsl_add_entity(game, particle); // Add particle to game list
 }
 
@@ -251,13 +252,16 @@ Entity* create_particle_test(Entity *from, WSL_App *game) {
 }
 
 void update_particle(Entity *particle, WSL_App *game) {
-    particle->frame++; //Update frame
+    particle->frame += 1; //Update frame
     particle->x += particle->dx * particle->speed; //Update x position
     particle->y += particle->dy * particle->speed; //Update y position
     
     if(particle->angle) {
         //If the particle starts off angled, spin it
         particle->angle += 45;
+    }
+    if((particle->rgba[3] > 25) && (particle->frame % 2 == 0)) {
+        particle->rgba[3] -= 5;
     }
 
     if(particle->frame > 25) {
@@ -275,8 +279,25 @@ void particle_death(Entity *particle, WSL_App *game) {
     Entity *decay = create_entity(particle->spriterect);
     decay->x = particle->x;
     decay->y = particle->y;
+    /*
+    decay->dy = particle->dy / 2;
+    if(decay->dy <= 0) decay->dy *= -1;
+    //decay->dx = particle->dx / 2;
+    decay->speed = particle->speed;
+    */
+    decay->dy = 2;
+    decay->speed = 1;
+    decay->angle = 45;
+    decay->spritescale = particle->spritescale;
+    decay->rgba[0] = particle->rgba[0];
+    decay->rgba[1] = particle->rgba[1];
+    decay->rgba[2] = particle->rgba[2];
+    decay->rgba[3] = particle->rgba[3] -10;
+    decay->frame = 15;
+    decay->flags = EF_ALIVE;
+    decay->update = &update_particle;
+    decay->render = &entity_render;
     wsl_add_entity(game, decay);
-
 }
 
 void render_particle_test(Entity *particle, WSL_App *game) {

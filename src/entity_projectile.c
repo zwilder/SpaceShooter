@@ -28,6 +28,7 @@ Entity* create_projectile(Entity *from, SDL_Rect spriterect) {
     proj->flags = EF_ALIVE | EF_PROJECTILE;
     proj->render = &entity_render;
     proj->update = &update_projectile;
+    proj->deathfunc = &projectile_impact_death;
     proj->speed = 16;
     proj->x = from->x + ((from->spriterect.w*from->spritescale) / 2);
     proj->y = from->y;
@@ -42,6 +43,7 @@ void update_projectile(Entity *proj, WSL_App *game) {
     if((proj->x <= 0) || (proj->x >= SCREEN_WIDTH) || 
             (proj->y <= 0) || (proj->y >= SCREEN_HEIGHT)) {
         proj->flags &= ~EF_ALIVE;
+        proj->flags |= EF_OOB;
     }
 
     // If the projectile hit something, kill both it and the projectile
@@ -71,4 +73,35 @@ void update_projectile(Entity *proj, WSL_App *game) {
     // Update the projectiles position
     proj->x += proj->dx * proj->speed;
     proj->y += proj->dy * proj->speed;
+}
+
+void update_projectile_flash(Entity *flash, WSL_App *game) {
+    flash->frame += 1;
+    flash->rgba[3] -= 25;
+    if(flash->frame >= 5) {
+        flash->spriterect.x = 443;
+        flash->spriterect.y = 182;
+        flash->spriterect.w = 48;
+        flash->spriterect.h = 46;
+    }
+    if(flash->frame == 10) {
+        flash->flags &= ~EF_ALIVE;
+    }
+}
+
+void projectile_impact_death(Entity *proj, WSL_App *game) {
+	//<SubTexture name="laserGreen14.png" x="193" y="240" width="48" height="46"/>
+	//<SubTexture name="laserGreen15.png" x="443" y="182" width="48" height="46"/>
+    if(!((proj->flags & EF_OOB) == EF_OOB)) {
+        SDL_Rect spriterect = {193,240,48,46};
+        Entity *flash = create_entity(spriterect);
+        flash->flags = EF_ALIVE;
+        flash->x = proj->x;
+        flash->y = proj->y;
+        flash->render = &entity_render;
+        flash->update = &update_projectile_flash;
+        flash->angle = 0.15 + (0.45*genrand_real1());
+        flash->spritescale = proj->spritescale * 0.6;
+        wsl_add_entity(game, flash);
+    }
 }

@@ -92,12 +92,14 @@ void update_player(Entity *player, WSL_App *game);
  *****/
 Entity* create_projectile(Entity *from, SDL_Rect spriterect);
 void update_projectile(Entity *proj, WSL_App *game);
+void projectile_impact_death(Entity *proj, WSL_App *game);
 
 /*****
  * Asteroid entity funcitons - entity_asteroid.c
  *****/
 Entity* create_asteroid(void);
 void spawn_asteroid(WSL_App *game);
+void spawn_small_asteroid(Entity *entity, WSL_App *game);
 void asteroid_death(Entity *entity, WSL_App *game);
 void update_asteroid(Entity *asteroid, WSL_App *game);
 void asteroid_damage(Entity *asteroid, WSL_App *game);

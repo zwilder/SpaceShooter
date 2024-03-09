@@ -118,6 +118,52 @@ void spawn_asteroid(WSL_App *game) {
     game->asteroidspawn = mt_rand(15,55); // Set timer to spawn a new asteroid
 }
 
+void spawn_small_asteroid(Entity *entity, WSL_App *game) {
+    /* Create a small asteroid with a random trajectory/distance from a point,
+     * moving at a random dx/dy from that point */
+    float angle = 0.0;
+    float radius = 0.0;
+    int max_radius = 4;
+    int min_velocity = 2;
+    int max_velocity = 4;
+    float x = entity->x;
+    float y = entity->y;
+    SDL_Rect spriterect;
+    if(mt_bool()) {
+        //<SubTexture name="meteorBrown_med1.png" x="651" y="447" width="43" height="43"/>
+        spriterect.x = 651;
+        spriterect.y = 447;
+        spriterect.w = 43;
+        spriterect.h = 43;
+    } else {
+        //<SubTexture name="meteorBrown_med3.png" x="237" y="452" width="45" height="40"/>
+        spriterect.x = 237;
+        spriterect.y = 452;
+        spriterect.w = 45;
+        spriterect.h = 40;
+    }
+    Entity *asteroid = create_entity(spriterect);
+    angle = 2*M_PI*(float)genrand_real1(); // angle to move about origin x,y
+    radius = max_radius*(float)genrand_real1(); // random distance from origin
+    // Polar to cartesian coordinates
+    asteroid->x = x + radius*(float)cos(angle); // x=r*cosA
+    asteroid->y = y + radius*(float)sin(angle); // y=r*sinA
+    //Random velocity along the x axis
+    asteroid->dx = min_velocity + (max_velocity*genrand_real1());
+    if(mt_bool()) asteroid->dx *= -1; // about half move left, other half right
+    //Random velocity along the y axis
+    asteroid->dy = min_velocity + (max_velocity*genrand_real1());
+    if(mt_bool()) asteroid->dy *= -1; // about half move up, other half down
+    asteroid->speed = 1;
+    asteroid->flags = EF_ALIVE | EF_ENEMY;
+    asteroid->render = &entity_render;
+    asteroid->update = &update_asteroid;
+    asteroid->spritescale = entity->spritescale;
+    asteroid->take_damage = &asteroid_damage;
+    //asteroid->deathfunc = &asteroid_death;
+    wsl_add_entity(game, asteroid);
+}
+
 void asteroid_damage(Entity *asteroid, WSL_App *game) {
     asteroid->health -= 1;
     asteroid->speed -= 2;
@@ -128,11 +174,16 @@ void asteroid_damage(Entity *asteroid, WSL_App *game) {
 }
 
 void asteroid_death(Entity *entity, WSL_App *game) {
+    int num_asteroids = 0, i = 0;
     if(!((entity->flags & EF_OOB) == EF_OOB)) {
+        num_asteroids = mt_rand(2,4);
         spawn_asteroid_explosion(entity->x, entity->y, game);
         //spawn_explosion(entity->x, entity->y, game);
         //spawn_random_color_explosion(entity->x, entity->y, game);
         //spawn_asteroid_particles(entity, WSL_App *game);
+        for(i = 0; i < num_asteroids; i++) {
+            spawn_small_asteroid(entity, game);
+        }
         //spawn_aliens_lol
         //spawn_brown_smoke(entity, WSL_App *game);
     }
