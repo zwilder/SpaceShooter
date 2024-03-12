@@ -115,8 +115,10 @@ void update_asteroid(Entity *asteroid, WSL_App *game) {
             otherbox = get_hitbox(other);
             if(check_collision_rect(hitbox, otherbox)) {
                 //CONTACT
-                other->take_damage(other,game);
-                asteroid->flags &= ~EF_ALIVE;
+                if(!((other->flags & EF_INV) == EF_INV)) {
+                    other->take_damage(other,game);
+                    asteroid->flags &= ~EF_ALIVE;
+                }
             }
         }
         other = other->next;

@@ -107,7 +107,7 @@ void update_player(Entity *player, WSL_App *game) {
         player->frame -= 1;
         player->cooldown = 25;
         if(player->frame % 2 == 0) {
-            player->rgba[3] = 125;
+            player->rgba[3] = 150;
         } else {
             player->rgba[3] = 25;
         }
@@ -152,13 +152,10 @@ void player_damage(Entity *player, WSL_App *game) {
 }
 
 void player_render(Entity *player, WSL_App *game) {
-    // If the player is damaged, render the appropriate damage sprite on top of
-    // the player
-	//<SubTexture name="playerShip1_damage1.png" x="112" y="941" width="99" height="75"/>
-	//<SubTexture name="playerShip1_damage2.png" x="247" y="234" width="99" height="75"/>
-	//<SubTexture name="playerShip1_damage3.png" x="247" y="159" width="99" height="75"/>
     SDL_Rect damagerect = {0,0,0,0};
+    SDL_Rect dmgquad = {0,0,0,0};
     switch(player->health) {
+        case(4):
         case(3):
             damagerect.x = 112;
             damagerect.y = 941;
@@ -181,8 +178,17 @@ void player_render(Entity *player, WSL_App *game) {
             break;
     }
     if(damagerect.x) {
-        //render the damage rect on top of the player
-
+        //render the damage rect under the player, so it's visable when the
+        //player is transparent (after they take damage)
+        SDL_SetTextureColorMod(game->spritesheet->tex, 255,255,255);
+        SDL_SetTextureAlphaMod(game->spritesheet->tex, 175);
+        dmgquad.x = player->x;
+        dmgquad.y = player->y;
+        dmgquad.w = damagerect.w * player->spritescale;
+        dmgquad.h = damagerect.h * player->spritescale;
+        SDL_RenderCopyEx(game->renderer, game->spritesheet->tex,
+                &damagerect, &dmgquad,
+                player->angle, NULL, SDL_FLIP_NONE);
     }
     entity_render(player, game);
 }
