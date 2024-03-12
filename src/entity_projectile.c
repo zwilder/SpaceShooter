@@ -56,8 +56,11 @@ void update_projectile(Entity *proj, WSL_App *game) {
         otherbox = get_hitbox(other);
         if(check_collision_rect(hitbox, otherbox)) {
             //CONTACT
-            if(entity_is_player(proj) && entity_is_enemy (other)) {
-                // Player projectile hitting enemy
+            if((entity_is_player(proj) && entity_is_enemy (other)) ||
+                   (entity_is_enemy(proj) && entity_is_player(other))) {
+                // Player projectile hitting enemy, or enemy projectile hitting
+                // player. Player projectiles can't hit player entities, and
+                // enemy projectiles can't hit enemy entities. 
                 proj->flags &= ~EF_ALIVE;
                 //other->flags &= ~EF_ALIVE;
                 if(other->take_damage) {
@@ -100,7 +103,8 @@ void projectile_impact_death(Entity *proj, WSL_App *game) {
         flash->y = proj->y;
         flash->render = &entity_render;
         flash->update = &update_projectile_flash;
-        flash->angle = 0.15 + (0.45*genrand_real1());
+        //flash->angle = 0.15 + (0.45*genrand_real1());
+        flash->angle = 0.45;
         flash->spritescale = proj->spritescale * 0.6;
         wsl_add_entity(game, flash);
     }

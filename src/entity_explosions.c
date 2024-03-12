@@ -59,6 +59,7 @@ void spawn_explosion_particle(int x, int y, WSL_App *game, SDL_Rect spriterect,
     particle->rgba[1] = g;
     particle->rgba[2] = b;
     particle->rgba[3] = a;
+    particle->frame = mt_rand(0,5); // Each particle lives for a diffent time
     particle->update = &update_particle; // Update function
     particle->render = &entity_render; // Basic entity render
     particle->deathfunc = &particle_death; // Gravity decay

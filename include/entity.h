@@ -30,7 +30,8 @@ typedef enum {
     EF_ENEMY        = 1 << 3,
     EF_COOLDOWN     = 1 << 4,
     EF_PROJECTILE   = 1 << 5,
-    EF_OOB          = 1 << 6
+    EF_OOB          = 1 << 6,
+    EF_INV          = 1 << 7
 } EntityFlags;
 
 typedef struct Entity Entity;
@@ -74,6 +75,7 @@ bool entities_are_player(Entity *a, Entity *b);
 bool entities_are_enemy(Entity *a, Entity *b);
 bool entity_is_player(Entity *a);
 bool entity_is_enemy(Entity *a);
+bool entity_is_projectile(Entity *a);
 bool check_collision_rect(SDL_Rect a, SDL_Rect b);
 
 /*****
@@ -86,6 +88,8 @@ void entity_render(Entity *entity, WSL_App *game);
  *****/
 Entity* create_player(SDL_Rect spriterect);
 void update_player(Entity *player, WSL_App *game);
+void player_damage(Entity *player, WSL_App *game);
+void player_render(Entity *player, WSL_App *game);
 
 /*****
  * Projectile entity functions - entity_projectile.c

@@ -86,6 +86,9 @@ Entity* create_asteroid(void) {
 
 void update_asteroid(Entity *asteroid, WSL_App *game) {
     // Kill the asteroid if it's out of bounds
+    Entity *other = NULL;
+    SDL_Rect hitbox = get_hitbox(asteroid);
+    SDL_Rect otherbox;
     if((asteroid->x <= 0) || (asteroid->x >= SCREEN_WIDTH) || 
             (asteroid->y >= SCREEN_HEIGHT)) {
         asteroid->flags &= ~EF_ALIVE;
@@ -99,6 +102,25 @@ void update_asteroid(Entity *asteroid, WSL_App *game) {
     }
     asteroid->x += asteroid->dx * asteroid->speed;
     asteroid->y += asteroid->dy * asteroid->speed;
+    // Check for contact with player
+    other = game->entities;
+    while(other) {
+        if(other == asteroid) {
+            other = other->next;
+            continue;
+        }
+        if(entity_is_player(other) && !entity_is_projectile(other)) {
+            //Asteroids only hit the player ship, collision with projectiles is
+            //checked in the projectile update function.
+            otherbox = get_hitbox(other);
+            if(check_collision_rect(hitbox, otherbox)) {
+                //CONTACT
+                other->take_damage(other,game);
+                asteroid->flags &= ~EF_ALIVE;
+            }
+        }
+        other = other->next;
+    }
 }
 
 void spawn_asteroid(WSL_App *game) {

@@ -29,9 +29,12 @@ Entity* create_player(SDL_Rect spriterect) {
     Entity *player = create_entity(spriterect);
     player->flags = EF_ALIVE | EF_PLAYER;
     player->update = &update_player;
-    player->render = &entity_render;
+    player->render = &player_render;
+    player->take_damage = &player_damage;
+    player->deathfunc = &firework_death;
     player->speed = 8;
     player->spritescale = 0.75;
+    player->health = 4;
     return player;
 }
 
@@ -100,6 +103,21 @@ void update_player(Entity *player, WSL_App *game) {
         player->flags |= EF_COOLDOWN; // Turn on cooldown flag
         player->cooldown = 25; // Start cooldown timer, entities should have a "firerate"
     }
+    if((player->flags & EF_INV) == EF_INV) {
+        player->frame -= 1;
+        player->cooldown = 25;
+        if(player->frame % 2 == 0) {
+            player->rgba[3] = 125;
+        } else {
+            player->rgba[3] = 25;
+        }
+        if(player->frame <= 0) {
+            player->flags &= ~EF_INV;
+            player->flags &= ~EF_COOLDOWN;
+            player->cooldown = 0;
+            player->rgba[3] = 255;
+        }
+    }
 
     /*
     if(player->particletimer <= 0) {
@@ -116,4 +134,55 @@ void update_player(Entity *player, WSL_App *game) {
         player->particletimer -= 1;
     }
     */
+}
+
+void player_damage(Entity *player, WSL_App *game) {
+    // I should make the player "invulnerable" after taking damage for a couple
+    // seconds..
+    if(!((player->flags & EF_INV) == EF_INV)) {
+        player->health -= 1;
+        if(player->health <= 0) {
+            player->flags &= ~EF_ALIVE;
+        }
+        player->flags |= EF_INV | EF_COOLDOWN;
+        player->frame = 50;
+        player->cooldown = 25;
+        player->rgba[3] = 25;
+    }
+}
+
+void player_render(Entity *player, WSL_App *game) {
+    // If the player is damaged, render the appropriate damage sprite on top of
+    // the player
+	//<SubTexture name="playerShip1_damage1.png" x="112" y="941" width="99" height="75"/>
+	//<SubTexture name="playerShip1_damage2.png" x="247" y="234" width="99" height="75"/>
+	//<SubTexture name="playerShip1_damage3.png" x="247" y="159" width="99" height="75"/>
+    SDL_Rect damagerect = {0,0,0,0};
+    switch(player->health) {
+        case(3):
+            damagerect.x = 112;
+            damagerect.y = 941;
+            damagerect.w = 99;
+            damagerect.h = 75;
+            break;
+        case(2):
+            damagerect.x = 247;
+            damagerect.y = 234;
+            damagerect.w = 99;
+            damagerect.h = 75;
+            break;
+        case(1):
+            damagerect.x = 247;
+            damagerect.y = 159;
+            damagerect.w = 99;
+            damagerect.h = 75;
+            break;
+        default:
+            break;
+    }
+    if(damagerect.x) {
+        //render the damage rect on top of the player
+
+    }
+    entity_render(player, game);
 }

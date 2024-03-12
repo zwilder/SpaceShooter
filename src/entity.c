@@ -116,6 +116,13 @@ bool entity_is_enemy(Entity *a) {
     return (((a->flags & EF_ENEMY) == EF_ENEMY));
 }
 
+bool entity_is_projectile(Entity *a) {
+    /*
+     * Check if Entity "a" has a projectile flag
+     */
+    return ((a->flags & EF_PROJECTILE) == EF_PROJECTILE);
+}
+
 bool check_collision_rect(SDL_Rect a, SDL_Rect b) {
     /* 
      * From rect.h/c in the toolbox, check if rectangle "a" intersects rectangle
