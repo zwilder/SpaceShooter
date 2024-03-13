@@ -21,8 +21,9 @@
 #include <spaceshooter.h>
 
 void draw(WSL_App *game) {
-    Entity *tmp = NULL;
+    Entity *tmp = NULL, *player = NULL;
     int x = 0, y = 0;
+    SDL_Color hud_color = {242,242,242};
     //SDL_Rect hitbox;
 
     // Clear the screen
@@ -37,13 +38,47 @@ void draw(WSL_App *game) {
         }
     }
 
-    // Render the entities
+    // Render the entities (and find the player)
     tmp = game->entities;
     while(tmp) {
         tmp->render(tmp, game);
         //hitbox = get_hitbox(tmp);
         //SDL_RenderDrawRect(game->renderer, &hitbox);
+        if(entity_is_player(tmp) && !entity_is_projectile(tmp)) {
+            player = tmp;
+        }
         tmp = tmp->next;
+    }
+
+    // Render the HUD
+    if(player) {
+        wsl_texture_load_text(game, game->hud_text, hud_color, 
+                "Points: 0");
+        wsl_texture_render(game->hud_text, 10,0);
+        switch(player->health) {
+            case 1:
+                hud_color.g -= 50;
+                hud_color.b -= 50;
+                //fall thru (less life is more red)
+            case 2:
+                hud_color.g -= 50;
+                hud_color.b -= 50;
+                break;
+            case 3:
+                hud_color.r -= 50;
+                hud_color.b -= 50;
+                break;
+            default: break;
+        }
+        wsl_texture_load_text(game, game->hud_text, hud_color, 
+                "Hull Integrity: %d%%", player->health * 25);
+        wsl_texture_render(game->hud_text, 10,26);
+    } else {
+        wsl_texture_load_text(game, game->hud_text, hud_color,
+                "GAME OVER");
+        wsl_texture_render(game->hud_text, 
+                (SCREEN_WIDTH - game->hud_text->w) / 2, 
+                (SCREEN_HEIGHT - game->hud_text->h) / 2);
     }
 
     // Present

@@ -23,6 +23,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 typedef struct Entity Entity;
 
@@ -37,8 +38,10 @@ typedef struct {
     SDL_Window *window; // The SDL Window
     SDL_Surface *screen_surface;
     SDL_Renderer *renderer; // The SDL Renderer
+    TTF_Font *font; // SDL Font
     WSL_Texture *spritesheet; // Spritesheet with all the sprites
-    WSL_Texture *bg; // Background texture, will be an array eventually
+    WSL_Texture *bg; // Background texture, will be an array eventually?
+    WSL_Texture *hud_text; // Heads up display text
     int bgoffset; // Scrollin' background offset
     Entity *entities; // Linked list of all the entities
     bool keyboard[MAX_KEYBOARD_KEYS]; // Keypress "flags" for all keys
@@ -62,6 +65,8 @@ void wsl_destroy_entity(WSL_App *app, Entity *entity);
 WSL_Texture* create_wsl_texture(SDL_Renderer *renderer);
 void destroy_wsl_texture(WSL_Texture *t);
 bool wsl_texture_load(WSL_Texture *t, char *path);
+bool wsl_texture_load_text(WSL_App *app, WSL_Texture *t, 
+        SDL_Color color, char *fstr, ...);
 void wsl_texture_render(WSL_Texture *t, int x, int y);
 void wsl_texture_render_rect(WSL_Texture *t, int x, int y, SDL_Rect *rect);
 void wsl_texture_render_rect_scaled(WSL_Texture *t, int x, int y, 

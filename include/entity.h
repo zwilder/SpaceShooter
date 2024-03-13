@@ -44,13 +44,13 @@ struct Entity {
     double angle; // Angle the sprite is rendered at
     int speed; // How fast the entity is
     int cooldown; // Action cooldown timer
-    //int particletimer; // Particle spawn timer
     int frame; // Animation frame timer
     int flags; // EntityFlags
-    int health;
+    int health; // How much health the entity has
     uint8_t rgba[4]; // Red, green, blue, alpha 
     SDL_Rect spriterect; // Rect of the player sprite, off spritesheet.xml
     float spritescale; // What scale the sprite should be rendered at
+
     Entity *next; // Entity is a linked list node, WSL_App contains the head
     Entity *prev; // Why is it double linked? Habit I suppose. 
 

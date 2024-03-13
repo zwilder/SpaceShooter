@@ -21,8 +21,8 @@
 
 Entity* create_player(SDL_Rect spriterect) {
     /*
-     * Player entity creation function. Sets the player update function, generic
-     * entity rendering function, and (eventually) will set the player death
+     * Player entity creation function. Sets the player update function, player
+     * entity rendering function, damage function, and the player death
      * function. The SDL_Rect is passed in with the ambition of someday having a
      * "choose your ship:" screen or some other player creation screen.
      */
@@ -145,13 +145,18 @@ void player_damage(Entity *player, WSL_App *game) {
             player->flags &= ~EF_ALIVE;
         }
         player->flags |= EF_INV | EF_COOLDOWN;
-        player->frame = 50;
-        player->cooldown = 25;
-        player->rgba[3] = 25;
+        player->frame = 120; //60fps, 120 is 2 seconds
+        player->cooldown = 25; // Can't shoot while "invulnerable"
+        player->rgba[3] = 25; // Show the ship damage sprites 
     }
 }
 
 void player_render(Entity *player, WSL_App *game) {
+    /*
+     * Render the player entity and the "damage" graphic directly under the
+     * player in the same space, so that when the player takes damage the ship
+     * "looks" damaged.
+     */
     SDL_Rect damagerect = {0,0,0,0};
     SDL_Rect dmgquad = {0,0,0,0};
     switch(player->health) {
@@ -180,7 +185,7 @@ void player_render(Entity *player, WSL_App *game) {
     if(damagerect.x) {
         //render the damage rect under the player, so it's visable when the
         //player is transparent (after they take damage)
-        SDL_SetTextureColorMod(game->spritesheet->tex, 255,255,255);
+        SDL_SetTextureColorMod(game->spritesheet->tex, 125,125,125);
         SDL_SetTextureAlphaMod(game->spritesheet->tex, 175);
         dmgquad.x = player->x;
         dmgquad.y = player->y;

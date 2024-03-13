@@ -4,7 +4,7 @@ OBJ_DIR = ./objs
 INC_DIR = ./include
 CC = gcc
 CFLAGS = -I$(INC_DIR)/ 
-LDFLAGS = -lm -lSDL2 -lSDL2_image
+LDFLAGS = -lm -lSDL2 -lSDL2_image -lSDL2_ttf
 OFLAGS = -O2
 GFLAGS = -g -Wall
 DEPS = $(OBJECTS:.o=.d)

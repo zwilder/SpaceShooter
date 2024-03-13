@@ -69,27 +69,40 @@ WSL_App* wsl_init_sdl(void) {
         }
     }
 
+    // Initialize SDL_ttf
+    if(success) {
+        if(TTF_Init() == -1) {
+            //TTF_Init returns 0 on success, -1 on failure
+            printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n",
+                    TTF_GetError());
+            success = false;
+        }
+    }
+
     // Get the window surface
     if(success) {
         app->screen_surface = SDL_GetWindowSurface(app->window);
     }
 
-    success = wsl_load_media(app);
+    if(!wsl_load_media(app)) {
+        success = false;
+    }
 
     // If everything went well, return app, otherwise cleanup and return NULL
     if(!success) {
         wsl_cleanup_sdl(app);
         app = NULL;
-    }
+    } else {
 
-    app->running = true;
-    app->entities = NULL;
-    app->bgoffset = 0;
-    app->asteroidspawn = 50;
-    
-    // Set keyboard flags to false
-    for(i = 0; i < MAX_KEYBOARD_KEYS; i++) {
-        app->keyboard[i] = false;
+        app->running = true;
+        app->entities = NULL;
+        app->bgoffset = 0;
+        app->asteroidspawn = 50;
+        
+        // Set keyboard flags to false
+        for(i = 0; i < MAX_KEYBOARD_KEYS; i++) {
+            app->keyboard[i] = false;
+        }
     }
     
     return app;
@@ -107,6 +120,8 @@ void wsl_cleanup_sdl(WSL_App *app) {
     SDL_DestroyWindow(app->window);
     app->window = NULL;
     IMG_Quit();
+    TTF_CloseFont(app->font);
+    TTF_Quit();
     SDL_Quit();
 
     // Cleanup entity list
@@ -131,6 +146,12 @@ bool wsl_load_media(WSL_App *app) {
         printf("Unable to load assets/black.png!\n");
         success = false;
     }
+    app->font = TTF_OpenFont("assets/kenvector_future.ttf",24);
+    if(!app->font) {
+        printf("Unable to load assets/kenvector_future.ttf");
+        success = false;
+    }
+    app->hud_text = create_wsl_texture(app->renderer);
     return success;
 }
 
@@ -244,6 +265,39 @@ bool wsl_texture_load(WSL_Texture *t, char *path) {
 
     SDL_FreeSurface(loaded);
     return true;
+}
+
+bool wsl_texture_load_text(WSL_App *app, WSL_Texture *t, SDL_Color color, char *fstr, ...) {
+    if(!fstr) return false;
+    if(!app) return false;
+    va_list args;
+    va_start(args, fstr);
+    int i = strlen(fstr) + 1;
+    SDL_Surface *text_surface = NULL;
+    char *str = malloc(i * sizeof(char));
+    vsnprintf(str,i,fstr,args);
+    va_end(args);
+    if(t->tex) {
+        SDL_DestroyTexture(t->tex);
+        t->tex = NULL;
+    }
+    text_surface = TTF_RenderText_Solid(app->font, str, color);
+    if(!text_surface) {
+        printf("Error rendering text: \"%s\", SDL_Error: %s\n",
+                str, SDL_GetError());
+    } else {
+        t->tex = SDL_CreateTextureFromSurface(app->renderer, text_surface);
+        if(!t->tex) {
+            printf("Unable to create texture from rendered text! SDL_Error: %s\n",
+                    SDL_GetError());
+        } else {
+            t->w = text_surface->w;
+            t->h = text_surface->h;
+        }
+        SDL_FreeSurface(text_surface);
+    }
+    free(str);
+    return (t->tex != NULL);
 }
 
 void wsl_texture_render(WSL_Texture *t, int x, int y) {
