@@ -38,6 +38,8 @@
  * Toolbox
  *****/
 #include <mt19937.h>
+#include <vec2i.h>
+#include <vec2f.h>
 
 /*****
  * Project

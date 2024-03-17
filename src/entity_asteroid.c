@@ -209,6 +209,9 @@ void asteroid_death(Entity *entity, WSL_App *game) {
             spawn_small_asteroid(entity, game);
         }
         //spawn_aliens_lol
+        if(mt_chance(10)) {
+            spawn_ufo(game, entity);
+        }
         //spawn_brown_smoke(entity, WSL_App *game);
     }
 }

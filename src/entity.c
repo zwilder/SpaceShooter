@@ -46,6 +46,7 @@ Entity* create_entity(SDL_Rect spriterect) {
     entity->next = NULL;
     entity->prev = NULL;
     entity->flags = EF_NONE;
+    entity->ai = NULL;
     entity->update = NULL;
     entity->render = NULL;
     entity->take_damage = NULL;
@@ -60,6 +61,10 @@ void destroy_entity(Entity *entity) {
      * fun things in the structure.
      */
     if(!entity) return;
+    if(entity->ai) {
+        free(entity->ai);
+        entity->ai = NULL;
+    }
     free(entity);
 }
 

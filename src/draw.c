@@ -23,7 +23,7 @@
 void draw(WSL_App *game) {
     Entity *tmp = NULL, *player = NULL;
     int x = 0, y = 0;
-    SDL_Color hud_color = {242,242,242};
+    SDL_Color hud_color = {242,242,242,255};
     //SDL_Rect hitbox;
 
     // Clear the screen
@@ -52,9 +52,16 @@ void draw(WSL_App *game) {
 
     // Render the HUD
     if(player) {
+        // Since writing text on the screen will always call these two functions
+        // together with the same first parameters, they should be in their own
+        // function: 
+        // draw_color_text(WSL_App *game, SDL_Color color, char *fstr, ...)
+        // draw_text(WSL_App *game, char *fstr, ...)
+        //  - Calls draw_color_text
+        //    with white color)
         wsl_texture_load_text(game, game->hud_text, hud_color, 
                 "Points: 0");
-        wsl_texture_render(game->hud_text, 10,0);
+        wsl_texture_render(game->hud_text, 20,2);
         switch(player->health) {
             case 1:
                 hud_color.g -= 50;
@@ -72,7 +79,7 @@ void draw(WSL_App *game) {
         }
         wsl_texture_load_text(game, game->hud_text, hud_color, 
                 "Hull Integrity: %d%%", player->health * 25);
-        wsl_texture_render(game->hud_text, 10,26);
+        wsl_texture_render(game->hud_text,20, SCREEN_HEIGHT - FONT_SIZE - 2);
     } else {
         wsl_texture_load_text(game, game->hud_text, hud_color,
                 "GAME OVER");
@@ -84,3 +91,58 @@ void draw(WSL_App *game) {
     // Present
     SDL_RenderPresent(game->renderer);
 }
+/*
+ * TODO: This function was giving me grief, and I was getting bored with trying
+ * to make the UI pretty. Fix this later.
+ *
+void draw_glass_panel(WSL_App *game, SDL_Rect grid) {
+	//<SubTexture name="glassPanel.png" x="0" y="0" width="100" height="100"/>
+    //<SubTexture name="metalPanel.png" x="200" y="200" width="100" height="100"/>
+    //Each panel texture in the uipackSpace_sheet.xml is the same size EXCEPT
+    //the glassPanel_tab sprite - so if we just add each x/y coordinate of the
+    //other textures to the basic glass panel... we can use the different
+    //sprites
+    // Break the panel texture into a 9x9 grid
+    int x = grid.x;
+    int y = grid.y;
+    int w = grid.w;
+    int h = grid.h;
+    int i = 0, j = 0;
+    int sx = 0; // Spritesheet x coord
+    int sy = 0; // Spritesheet y coord
+    SDL_Rect panelTL = {0+sx,0+sy,34,34};
+    SDL_Rect panelTM = {34+sx,0+sy,33,34};
+    SDL_Rect panelTR = {67+sx,0+sy,33,34};
+
+    SDL_Rect panelML = {0+sx,34+sy,34,33};
+    SDL_Rect panelMM = {34+sx,34+sy,33,33};
+    SDL_Rect panelMR = {67+sx,34+sy,33,33};
+
+    SDL_Rect panelBL = {0+sx,67+sy,34,33};
+    SDL_Rect panelBM = {34+sx,67+sy,33,33};
+    SDL_Rect panelBR = {67+sx,67+sy,33,33};
+
+    SDL_Rect renderquad = {x,y,panelTL.w,panelTL.h};
+
+    //w and h are "units" of the panel
+
+    //Starting at x,y draw the TL panel
+    SDL_RenderCopy(game->renderer, game->ui_spritesheet->tex, &panelTL, &renderquad);
+
+    //draw TM at x+(i*TL.w),y while i < w
+    renderquad.w = panelTM.w;
+    renderquad.h = panelTM.h;
+    renderquad.x += 1;
+    for(i = 1; i < w; i++) {
+        renderquad.x += panelTM.w;
+        SDL_RenderCopy(game->renderer, game->ui_spritesheet->tex, &panelTM, &renderquad);
+    }
+    //draw TR at x+(w*TL.w),y
+    renderquad.w = panelTR.w;
+    renderquad.h = panelTR.h;
+    renderquad.x += panelTM.w;
+    SDL_RenderCopy(game->renderer,game->ui_spritesheet->tex, &panelTR, &renderquad);
+
+}
+*/
+

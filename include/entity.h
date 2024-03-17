@@ -35,6 +35,7 @@ typedef enum {
 } EntityFlags;
 
 typedef struct Entity Entity;
+typedef struct EntityAI EntityAI;
 
 struct Entity {
     float x; // Will probably replace with a float, or Vec2f even 
@@ -54,12 +55,21 @@ struct Entity {
     Entity *next; // Entity is a linked list node, WSL_App contains the head
     Entity *prev; // Why is it double linked? Habit I suppose. 
 
+    EntityAI *ai; // AI Component
+
     void (*update)(Entity*, WSL_App*); // Entity update function
     void (*render)(Entity*, WSL_App*); // Entity render function
     void (*take_damage)(Entity*, WSL_App*); // What do when taking damage
     void (*deathfunc)(Entity*, WSL_App*); // Function to be called on entity destruction
 };
 
+struct EntityAI {
+    Vec2f bzst; // Bezier curve points, start/mid/end
+    Vec2f bzmid;// For movement, enemies move on a curve
+    Vec2f bzend;
+    float bzt; // Interpolation point on curve, value 0-1
+    bool mvleft;
+};
 /*****
  * Entity Creation/Destruction - entity.c
  *****/
@@ -97,6 +107,15 @@ void player_render(Entity *player, WSL_App *game);
 Entity* create_projectile(Entity *from, SDL_Rect spriterect);
 void update_projectile(Entity *proj, WSL_App *game);
 void projectile_impact_death(Entity *proj, WSL_App *game);
+
+/*****
+ * UFO entity functions - entity_ufo.c
+ *****/
+Entity* create_ufo(SDL_Rect spriterect);
+void spawn_ufo(WSL_App *game, Entity *from);
+void ufo_update(Entity *ufo, WSL_App *game);
+void ufo_damage(Entity *ufo, WSL_App *game);
+void ufo_death(Entity *ufo, WSL_App *game);
 
 /*****
  * Asteroid entity funcitons - entity_asteroid.c

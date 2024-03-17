@@ -115,6 +115,7 @@ void wsl_cleanup_sdl(WSL_App *app) {
     // Cleanup SDL
     destroy_wsl_texture(app->bg);
     destroy_wsl_texture(app->spritesheet);
+    destroy_wsl_texture(app->ui_spritesheet);
     SDL_DestroyRenderer(app->renderer);
     app->renderer = NULL;
     SDL_DestroyWindow(app->window);
@@ -141,14 +142,19 @@ bool wsl_load_media(WSL_App *app) {
         printf("Unable to load assets/spritesheet.png!\n");
         success = false;
     }
+    app->ui_spritesheet = create_wsl_texture(app->renderer);
+    if(!wsl_texture_load(app->ui_spritesheet,"assets/uipackSpace_sheet.png")) {
+        printf("Unable to load assets/uipackSpace_sheet.png!\n");
+        success = false;
+    }
     app->bg = create_wsl_texture(app->renderer);
     if(!wsl_texture_load(app->bg, "assets/black.png")) {
         printf("Unable to load assets/black.png!\n");
         success = false;
     }
-    app->font = TTF_OpenFont("assets/kenvector_future.ttf",24);
+    app->font = TTF_OpenFont("assets/kenvector_future.ttf",FONT_SIZE);
     if(!app->font) {
-        printf("Unable to load assets/kenvector_future.ttf");
+        printf("Unable to load assets/kenvector_future.ttf!\n");
         success = false;
     }
     app->hud_text = create_wsl_texture(app->renderer);

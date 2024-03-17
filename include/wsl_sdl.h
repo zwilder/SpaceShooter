@@ -40,6 +40,7 @@ typedef struct {
     SDL_Renderer *renderer; // The SDL Renderer
     TTF_Font *font; // SDL Font
     WSL_Texture *spritesheet; // Spritesheet with all the sprites
+    WSL_Texture *ui_spritesheet; // Spritesheet with all the UI textures
     WSL_Texture *bg; // Background texture, will be an array eventually?
     WSL_Texture *hud_text; // Heads up display text
     int bgoffset; // Scrollin' background offset
