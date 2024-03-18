@@ -116,6 +116,7 @@ void wsl_cleanup_sdl(WSL_App *app) {
     destroy_wsl_texture(app->bg);
     destroy_wsl_texture(app->spritesheet);
     destroy_wsl_texture(app->ui_spritesheet);
+    destroy_wsl_texture(app->hud_text);
     SDL_DestroyRenderer(app->renderer);
     app->renderer = NULL;
     SDL_DestroyWindow(app->window);

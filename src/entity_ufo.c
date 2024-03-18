@@ -107,15 +107,36 @@ void spawn_ufo(WSL_App *game, Entity *from) {
 void ufo_update(Entity *ufo, WSL_App *game) {
     Vec2f newpos = {};
     EntityAI *ai = ufo->ai;
-    ufo->frame += 1;
+    ufo->frame += 1; //Update the ufo's internal clock
     if(ufo->frame % 3 == 0) {
+        // Every third frame rotate the ship a bit. 
         ufo->angle += 15;
     }
     if(ufo->frame > 60) {
         // 60 frames per second, so every second check the following:
         ufo->frame = 0;
         if(mt_chance(15)) ai->mvleft = !ai->mvleft; //15% chance to randomly change direction
+        if((ufo->flags & EF_INV) == EF_INV) {
+            //Turn off the invulnerable flag
+            ufo->flags &= ~EF_INV;
+            ufo->rgba[3] = 255;
+        }
     }
+    //Flash sprite if invulnerable
+    if((ufo->flags & EF_INV) == EF_INV) {
+        if(ufo->frame % 2 == 0) {
+            ufo->rgba[3] = 150;
+        } else {
+            ufo->rgba[3] = 25;
+        }
+    }
+
+    //Spawn smoke particles if damaged
+    if(ufo->health == 1) {
+        //Placeholder: Haven't attempted smoke particles yet
+        //(Just didn't want to forget this idea. TODO
+    }
+
     //Move the ufo to a new x,y point along the ufo's bezier curve
     //(advance the ufo's bzt, get the vec2f of the new point)
     //Change direction if we are near bzt == 0 or bzt == 1
@@ -147,6 +168,8 @@ void ufo_update(Entity *ufo, WSL_App *game) {
 
 void ufo_damage(Entity *ufo, WSL_App *game) {
     ufo->health -= 1;
+    ufo->flags |= EF_INV;
+    ufo->frame = 30; // Reset frame, UFO is invulnerable for a second after hit
     if(ufo->health <= 0) {
         ufo->flags &= ~EF_ALIVE;
     }

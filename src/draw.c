@@ -52,13 +52,6 @@ void draw(WSL_App *game) {
 
     // Render the HUD
     if(player) {
-        // Since writing text on the screen will always call these two functions
-        // together with the same first parameters, they should be in their own
-        // function: 
-        // draw_color_text(WSL_App *game, SDL_Color color, char *fstr, ...)
-        // draw_text(WSL_App *game, char *fstr, ...)
-        //  - Calls draw_color_text
-        //    with white color)
         wsl_texture_load_text(game, game->hud_text, hud_color, 
                 "Points: 0");
         wsl_texture_render(game->hud_text, 20,2);
