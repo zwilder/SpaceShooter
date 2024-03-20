@@ -186,7 +186,7 @@ void player_render(Entity *player, WSL_App *game) {
         //render the damage rect under the player, so it's visable when the
         //player is transparent (after they take damage)
         SDL_SetTextureColorMod(game->spritesheet->tex, 125,125,125);
-        SDL_SetTextureAlphaMod(game->spritesheet->tex, 175);
+        SDL_SetTextureAlphaMod(game->spritesheet->tex, 255);
         dmgquad.x = player->x;
         dmgquad.y = player->y;
         dmgquad.w = damagerect.w * player->spritescale;

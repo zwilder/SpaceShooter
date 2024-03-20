@@ -107,6 +107,9 @@ void spawn_ufo(WSL_App *game, Entity *from) {
 void ufo_update(Entity *ufo, WSL_App *game) {
     Vec2f newpos = {};
     EntityAI *ai = ufo->ai;
+    Entity *proj = NULL;
+	//<SubTexture name="laserRed06.png" x="843" y="903" width="13" height="37"/>
+    SDL_Rect projrect = {843,903,13,37};
     ufo->frame += 1; //Update the ufo's internal clock
     if(ufo->frame % 3 == 0) {
         // Every third frame rotate the ship a bit. 
@@ -120,6 +123,7 @@ void ufo_update(Entity *ufo, WSL_App *game) {
             //Turn off the invulnerable flag
             ufo->flags &= ~EF_INV;
             ufo->rgba[3] = 255;
+            ufo->speed = 8;
         }
     }
     //Flash sprite if invulnerable
@@ -164,12 +168,26 @@ void ufo_update(Entity *ufo, WSL_App *game) {
     newpos = get_vec2f_on_bezier(ai->bzst, ai->bzmid, ai->bzend, ai->bzt);
     ufo->x = newpos.x;
     ufo->y = newpos.y;
+
+    // Fire lasers!
+    if(!ufo->cooldown && (!((ufo->flags & EF_INV) == EF_INV))) {
+        proj = create_projectile(ufo, projrect);
+        proj->flags |= EF_ENEMY;
+        proj->dy = 1; // Projectile going down
+        proj->angle = 180;
+        proj->spritescale = ufo->spritescale;
+        wsl_add_entity(game, proj); // Add projectile to list
+        ufo->flags |= EF_COOLDOWN; // Turn on cooldown flag
+        ufo->cooldown = 60; // Start cooldown timer, entities should have a "firerate"
+    }
 }
 
 void ufo_damage(Entity *ufo, WSL_App *game) {
+    if((ufo->flags & EF_INV) == EF_INV) return;
     ufo->health -= 1;
     ufo->flags |= EF_INV;
-    ufo->frame = 30; // Reset frame, UFO is invulnerable for a second after hit
+    ufo->speed = 24; // ZIP AWAY
+    ufo->frame = 0; // Reset frame, UFO is invulnerable for a second after hit
     if(ufo->health <= 0) {
         ufo->flags &= ~EF_ALIVE;
     }

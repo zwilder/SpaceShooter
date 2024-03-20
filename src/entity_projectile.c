@@ -49,7 +49,7 @@ void update_projectile(Entity *proj, WSL_App *game) {
     // If the projectile hit something, kill both it and the projectile
     other = game->entities;
     while(other) {
-        if(other == proj) {
+        if((other == proj) || (entity_is_projectile(other))) {
             other = other->next;
             continue;
         }
@@ -68,6 +68,10 @@ void update_projectile(Entity *proj, WSL_App *game) {
                 } else {
                     other->flags &= ~EF_ALIVE;
                 }
+            } else if ((entity_is_enemy(proj) && entity_is_player(other))) {
+                // Enemy projectile hitting player
+                proj->flags &= ~EF_ALIVE;
+                other->take_damage(other, game);
             }
         }
         other = other->next;
