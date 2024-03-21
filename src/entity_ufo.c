@@ -144,6 +144,10 @@ void ufo_update(Entity *ufo, WSL_App *game) {
     //Move the ufo to a new x,y point along the ufo's bezier curve
     //(advance the ufo's bzt, get the vec2f of the new point)
     //Change direction if we are near bzt == 0 or bzt == 1
+    /*
+     * Note for future self, a cubic curve made with start.x,start.y, ctA.x,start.y,
+     * start.x,ctB.y, and ctA.x,ctB.x makes a nice backwards "S" on the screen
+     */
     if(ai->mvleft) {
         ai->bzt -= ((float)ufo->speed / 1000);
     } else {
@@ -165,7 +169,7 @@ void ufo_update(Entity *ufo, WSL_App *game) {
             ai->bzst.y = (SCREEN_HEIGHT)*(float)genrand_real1();
         }
     }
-    newpos = get_vec2f_on_bezier(ai->bzst, ai->bzmid, ai->bzend, ai->bzt);
+    newpos = get_vec2f_bezier_opt(ai->bzst, ai->bzmid, ai->bzend, ai->bzt);
     ufo->x = newpos.x;
     ufo->y = newpos.y;
 

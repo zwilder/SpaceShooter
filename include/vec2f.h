@@ -20,6 +20,7 @@
 #ifndef VEC2F_H
 #define VEC2F_H
 
+#include <math.h>
 #include <stdbool.h>
 
 typedef struct {
@@ -36,6 +37,11 @@ Vec2f subtract_vec2f(Vec2f a, Vec2f b);
 bool eq_vec2f(Vec2f a, Vec2f b);
 float lerp_f(float a, float b, float t);
 Vec2f lerp_vec2f(Vec2f a, Vec2f b, float t);
-Vec2f get_vec2f_on_bezier(Vec2f start, Vec2f mid, Vec2f end, float t);
+Vec2f get_vec2f_bezier(Vec2f start, Vec2f mid, Vec2f end, float t);
+Vec2f get_vec2f_bezier_opt(Vec2f start, Vec2f mid, Vec2f end, float t);
+Vec2f get_vec2f_cubic_bezier(Vec2f start, Vec2f ctA, 
+        Vec2f ctB, Vec2f end, float t);
+Vec2f get_vec2f_cubic_bezier_opt(Vec2f start, Vec2f ctA, 
+        Vec2f ctB, Vec2f end, float t);
 
 #endif //VEC2F_H
