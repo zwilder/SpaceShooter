@@ -18,38 +18,27 @@
 * along with Space Shooter.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SPACESHOOTER_H
-#define SPACESHOOTER_H
+#ifndef TIMER_H
+#define TIMER_H
 
-/*****
- * System
- *****/
-#include <stdio.h>
 #include <stdbool.h>
 
-/*****
- * SDL2
- *****/
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
+typedef struct Timer Timer;
 
-/*****
- * Toolbox
- *****/
-#include <mt19937.h>
-#include <vec2i.h>
-#include <vec2f.h>
+struct Timer {
+    Timer *next;
+    Timer *prev;
 
-/*****
- * Project
- *****/
-#include <defs.h>
-#include <timer.h>
-#include <entity.h>
-#include <wsl_sdl.h>
-#include <handle_events.h>
-#include <update.h>
-#include <draw.h>
+    int initTime;
+    int curTime;
+    bool repeat;
 
-#endif //SPACESHOOTER_H
+    void (*action)(void *obj);
+};
+
+Timer* create_timer(int t, void (*action)(void *obj), bool repeat);
+void destroy_timer(Timer *timer);
+void update_timer_list(Timer *headref, void *owner);
+void add_timer_to_list(Timer **headref, Timer *timer);
+Timer* remove_timer_from_list(Timer **headref, Timer *timer);
+#endif //TIMER_H

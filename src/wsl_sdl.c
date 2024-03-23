@@ -288,7 +288,7 @@ bool wsl_texture_load_text(WSL_App *app, WSL_Texture *t, SDL_Color color, char *
         SDL_DestroyTexture(t->tex);
         t->tex = NULL;
     }
-    text_surface = TTF_RenderText_Solid(app->font, str, color);
+    text_surface = TTF_RenderUTF8_Solid(app->font, str, color);
     if(!text_surface) {
         printf("Error rendering text: \"%s\", SDL_Error: %s\n",
                 str, SDL_GetError());

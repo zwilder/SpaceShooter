@@ -44,16 +44,9 @@ struct Entity {
     float dy;
     double angle; // Angle the sprite is rendered at
     int speed; // How fast the entity is
-    int cooldown; // Action cooldown timer
+    int cooldown; // Action cooldown timer (TODO: Obsolete, replace with Timer)
     int frame; // Animation frame timer
-    /*
-     * TODO: Explore this idea - what if we have a simple linked list of integer
-     * "timers" that each entity owns. Each timer could have a void
-     * (*action)(void) function that is called when the timer is updated, and a
-     * boolean "repeat" if the timer resets when it hits 0? This could also be
-     * used elsewhere in the application (say for enemy waves, asteroid
-     * spawning, etc)...
-     */
+    Timer *timers; // Event timers
     int flags; // EntityFlags
     int health; // How much health the entity has
     uint8_t rgba[4]; // Red, green, blue, alpha 
