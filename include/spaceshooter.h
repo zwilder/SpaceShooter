@@ -45,7 +45,6 @@
  * Project
  *****/
 #include <defs.h>
-#include <timer.h>
 #include <entity.h>
 #include <wsl_sdl.h>
 #include <handle_events.h>

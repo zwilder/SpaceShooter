@@ -46,7 +46,6 @@ struct Entity {
     int speed; // How fast the entity is
     int cooldown; // Action cooldown timer (TODO: Obsolete, replace with Timer)
     int frame; // Animation frame timer
-    Timer *timers; // Event timers
     int flags; // EntityFlags
     int health; // How much health the entity has
     uint8_t rgba[4]; // Red, green, blue, alpha 
