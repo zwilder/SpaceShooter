@@ -29,6 +29,7 @@ To Do:
 - Powerups!
 
 [Work in progress video: 9/29/24](https://zwilder.github.io/assets/Various/SpaceShooter_WIP240929.mp4)
+
 [Work in progress video: 3/17/24](https://zwilder.github.io/assets/Various/SpaceShooter_WIP240317.mp4)
 
 The wonderful art/sound/font assets are provided by:
