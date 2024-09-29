@@ -51,6 +51,7 @@ Entity* create_entity(SDL_Rect spriterect) {
     entity->render = NULL;
     entity->take_damage = NULL;
     entity->deathfunc = NULL;
+    entity->txt = NULL;
     return entity;
 }
 
@@ -64,6 +65,10 @@ void destroy_entity(Entity *entity) {
     if(entity->ai) {
         free(entity->ai);
         entity->ai = NULL;
+    }
+    if(entity->txt) {
+        free(entity->txt);
+        entity->txt = NULL;
     }
     free(entity);
 }

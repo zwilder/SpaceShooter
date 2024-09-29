@@ -65,6 +65,7 @@ void handle_keydown_menu(SDL_KeyboardEvent *event, WSL_App *game) {
             for(i = 0; i < mt_rand(5,10); i++) {
                 spawn_random_color_explosion(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, game);
             }
+            //spawn_bliptxt(10,10,game,"TEST TEXT!",60,255,0,0,250);
             break;
         case SDLK_n:
             game->state = GS_NEW;

@@ -107,6 +107,11 @@ void update_newgame(WSL_App *game) {
     player->cooldown = 25; // Can't shoot while "invulnerable"
     wsl_add_entity(game, player);
 
+    // Good luck!
+    spawn_bliptxt(SCREEN_WIDTH/2 - (FONT_SIZE * 17)/2,
+            SCREEN_HEIGHT/2 - FONT_SIZE,
+            game,"G O O D   L U C K , C A P T A I N !",60,255,0,0,250);
+
     // Switch the state
     game->state = GS_GAME;
 }

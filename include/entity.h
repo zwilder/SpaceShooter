@@ -44,13 +44,14 @@ struct Entity {
     float dy;
     double angle; // Angle the sprite is rendered at
     int speed; // How fast the entity is
-    int cooldown; // Action cooldown timer (TODO: Obsolete, replace with Timer)
+    int cooldown; // Action cooldown timer 
     int frame; // Animation frame timer
     int flags; // EntityFlags
     int health; // How much health the entity has
     uint8_t rgba[4]; // Red, green, blue, alpha 
     SDL_Rect spriterect; // Rect of the player sprite, off spritesheet.xml
     float spritescale; // What scale the sprite should be rendered at
+    char *txt; // Used by bliptxt, could get the $USER for the high scores?
 
     Entity *next; // Entity is a linked list node, WSL_App contains the head
     Entity *prev; // Why is it double linked? Habit I suppose. 
@@ -143,5 +144,13 @@ void particle_death(Entity *particle, WSL_App *game);
 Entity* create_particle_test(Entity *from, WSL_App *game);
 void render_particle_test(Entity *particle, WSL_App *game);
 void firework_death(Entity *entity, WSL_App *game);
+
+/*****
+ * Blip text - entity_bliptxt.c
+ *****/
+void spawn_bliptxt(int x, int y, WSL_App *game, char *txt, int life,
+        uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+void update_bliptxt(Entity *blip, WSL_App *game);
+void bliptxt_render(Entity *blip, WSL_App *game);
 
 #endif //ENTITY_H
