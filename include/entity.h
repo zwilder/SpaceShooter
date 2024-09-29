@@ -31,7 +31,8 @@ typedef enum {
     EF_COOLDOWN     = 1 << 4,
     EF_PROJECTILE   = 1 << 5,
     EF_OOB          = 1 << 6,
-    EF_INV          = 1 << 7
+    EF_INV          = 1 << 7,
+    EF_BLIP         = 1 << 8
 } EntityFlags;
 
 typedef struct Entity Entity;
@@ -87,6 +88,7 @@ bool entities_are_enemy(Entity *a, Entity *b);
 bool entity_is_player(Entity *a);
 bool entity_is_enemy(Entity *a);
 bool entity_is_projectile(Entity *a);
+bool entity_is_blip(Entity *a);
 bool check_collision_rect(SDL_Rect a, SDL_Rect b);
 
 /*****
@@ -125,6 +127,7 @@ Entity* create_asteroid(void);
 void spawn_asteroid(WSL_App *game);
 void spawn_small_asteroid(Entity *entity, WSL_App *game);
 void asteroid_death(Entity *entity, WSL_App *game);
+void asteroid_sm_death(Entity *entity, WSL_App *game);
 void update_asteroid(Entity *asteroid, WSL_App *game);
 void asteroid_damage(Entity *asteroid, WSL_App *game);
 
@@ -148,7 +151,7 @@ void firework_death(Entity *entity, WSL_App *game);
 /*****
  * Blip text - entity_bliptxt.c
  *****/
-void spawn_bliptxt(int x, int y, WSL_App *game, char *txt, int life,
+void spawn_bliptxt(int x, int y, WSL_App *game, char *txt, int life, int speed,
         uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 void update_bliptxt(Entity *blip, WSL_App *game);
 void bliptxt_render(Entity *blip, WSL_App *game);

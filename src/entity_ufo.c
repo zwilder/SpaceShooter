@@ -174,7 +174,8 @@ void ufo_update(Entity *ufo, WSL_App *game) {
     ufo->y = newpos.y;
 
     // Fire lasers!
-    if(!ufo->cooldown && (!((ufo->flags & EF_INV) == EF_INV))) {
+    if(!ufo->cooldown && (!((ufo->flags & EF_INV) == EF_INV)) 
+            && (game->state == GS_GAME)) {
         proj = create_projectile(ufo, projrect);
         proj->flags |= EF_ENEMY;
         proj->dy = 1; // Projectile going down
@@ -198,10 +199,14 @@ void ufo_damage(Entity *ufo, WSL_App *game) {
 }
 
 void ufo_death(Entity *ufo, WSL_App *game) {
-    // Eventually, will write a particle explosion that breaks the ufo's
+    // TODO: write a particle explosion that breaks the ufo's
     // spriterect into a 3x3 grid, with each cell acting as a "particle" in the
     // explosion
     //
     //firework_death(ufo, game);
-    spawn_random_color_explosion(ufo->x,ufo->y,game);
+    int i;
+    for(i = 0; i < mt_rand(2,5); i++) {
+        spawn_random_color_explosion(ufo->x,ufo->y,game);
+    }
+    game->score += 500;
 }

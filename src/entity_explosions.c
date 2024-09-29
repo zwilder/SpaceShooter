@@ -276,25 +276,23 @@ void update_particle(Entity *particle, WSL_App *game) {
 void particle_death(Entity *particle, WSL_App *game) {
     // Spawn a fancy NEW particle to replace this particle that "falls" down the
     // screen (with "gravity")
-    // TODO FINISH this function tlater
+    // TODO FINISH this function tlater -- tinker around with dx/dy/speed
     Entity *decay = create_entity(particle->spriterect);
     decay->x = particle->x;
     decay->y = particle->y;
-    /*
-    decay->dy = particle->dy / 2;
-    if(decay->dy <= 0) decay->dy *= -1;
-    //decay->dx = particle->dx / 2;
-    decay->speed = particle->speed;
-    */
-    decay->dy = 2;
-    decay->speed = 1;
+    
+    decay->dy = particle->dy / (mt_rand(2,8)); // The closer this is to 1 the more vertical it goes
+    //if(decay->dy <= 0) decay->dy *= -1; // Make sure the "dead" particles "fall"
+    decay->dx = particle->dx / (mt_rand(4,8)); // The closer this is to 1 the more horizontal it goes
+    
+    decay->speed = mt_rand(1,3); // The farther apart these numbers are the weirder it looks
     decay->angle = 45;
     decay->spritescale = particle->spritescale;
     decay->rgba[0] = particle->rgba[0];
     decay->rgba[1] = particle->rgba[1];
     decay->rgba[2] = particle->rgba[2];
-    decay->rgba[3] = particle->rgba[3] -10;
-    decay->frame = 15;
+    decay->rgba[3] = particle->rgba[3];// -10;
+    decay->frame = 5; // Higher this is, the shorter lived the "dead" particle (particles "die" after 25 frames)
     decay->flags = EF_ALIVE;
     decay->update = &update_particle;
     decay->render = &entity_render;

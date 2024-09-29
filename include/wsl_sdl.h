@@ -55,8 +55,9 @@ typedef struct {
     Entity *entities; // Linked list of all the entities
     bool keyboard[MAX_KEYBOARD_KEYS]; // Keypress "flags" for all keys
     bool running; // Will likely be replaced with bitflags tlater
-    int state;
+    int state; // Current game state
     int asteroidspawn; // Asteroid spawn timer
+    int score; // The current player score
 } WSL_App;
 
 /*****

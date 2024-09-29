@@ -110,7 +110,12 @@ void update_newgame(WSL_App *game) {
     // Good luck!
     spawn_bliptxt(SCREEN_WIDTH/2 - (FONT_SIZE * 17)/2,
             SCREEN_HEIGHT/2 - FONT_SIZE,
-            game,"G O O D   L U C K , C A P T A I N !",60,255,0,0,250);
+            game,"G O O D   L U C K , C A D E T !",
+            60,15,
+            255,0,0,250);
+
+    // Reset the score
+    game->score = 0;
 
     // Switch the state
     game->state = GS_GAME;
@@ -141,6 +146,7 @@ void update_game(WSL_App *game) {
             //if it's the player, change game state
             if(entity_is_player(tmp) && !entity_is_projectile(tmp)) {
                 game->state = GS_GAMEOVER;
+                spawn_bliptxt(0,0,game," ", 60,0,0,0,0,0); // Slight pause bliptxt
             }
             if(tmp->deathfunc) tmp->deathfunc(tmp, game);
             wsl_destroy_entity(game, tmp);
@@ -167,11 +173,15 @@ void update_scores(WSL_App *game) {
 void update_gameover(WSL_App *game) {
     Entity *entity = NULL, *tmp = NULL;
     int i = 0;
+    bool chstate = true;
     update_game(game); // Do all the same stuff as in game state but then...
     // Check to see if any keys were pressed
     // TODO: There needs to be some sort of delay or something here or a prompt
     // for a specific key on game over (otherwise this just poofs away if the
     // player is holding down a key when they die)
+    //
+    // Maybe - find a bliptxt entity, and if it exists, dont switch state?
+    // sorta hacky but it works for now?
     for(i = 0; i < MAX_KEYBOARD_KEYS; i++) {
         if(game->keyboard[i]) {
             // Destroy all entities
@@ -179,10 +189,17 @@ void update_gameover(WSL_App *game) {
             while(entity) {
                 tmp = entity;
                 entity = entity->next;
-                wsl_destroy_entity(game, tmp);
+                if(!((tmp->flags & EF_ALIVE) == EF_ALIVE)) {
+                    wsl_destroy_entity(game, tmp);
+                }
+                if(entity_is_blip(tmp)) {
+                    chstate = false;
+                }
             }
-            // Back to the menu!
-            game->state = GS_MENU;
+            if(chstate) {
+                // Back to the menu!
+                game->state = GS_MENU;
+            }
         }
     }
 }

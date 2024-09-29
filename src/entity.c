@@ -133,6 +133,13 @@ bool entity_is_projectile(Entity *a) {
     return ((a->flags & EF_PROJECTILE) == EF_PROJECTILE);
 }
 
+bool entity_is_blip(Entity *a) {
+    /*
+     * Check if Entity "a" has a blip flag
+     */
+    return((a->flags & EF_BLIP) == EF_BLIP);
+}
+
 bool check_collision_rect(SDL_Rect a, SDL_Rect b) {
     /* 
      * From rect.h/c in the toolbox, check if rectangle "a" intersects rectangle

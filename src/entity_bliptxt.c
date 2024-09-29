@@ -19,7 +19,7 @@
 */
 #include <spaceshooter.h>
 
-void spawn_bliptxt(int x, int y, WSL_App *game, char *txt, int life,
+void spawn_bliptxt(int x, int y, WSL_App *game, char *txt, int life, int speed,
         uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     /*
      * Creates a short lived entity that is displayed as the string "txt", that
@@ -27,14 +27,15 @@ void spawn_bliptxt(int x, int y, WSL_App *game, char *txt, int life,
      */
     SDL_Rect spriterect = {0,0,0,0};
     Entity *blip = create_entity(spriterect);
-    blip->flags = EF_ALIVE;
+    blip->flags = EF_ALIVE | EF_BLIP;
     blip->update = &update_bliptxt;
     blip->render = &bliptxt_render;
     blip->rgba[0] = r;
     blip->rgba[1] = g;
     blip->rgba[2] = b;
     blip->rgba[3] = a;
-    blip->cooldown = life;
+    blip->cooldown = life; // How long the blip lasts before disappearing
+    blip->speed = speed; // The smaller this number is, the less blinky
     blip->x = x;
     blip->y = y;
     blip->txt = malloc(strlen(txt) * sizeof(char) + 1);
@@ -46,8 +47,13 @@ void spawn_bliptxt(int x, int y, WSL_App *game, char *txt, int life,
 void update_bliptxt(Entity *blip, WSL_App *game) {
     // Modulate the blip's alpha, so it flashes when rendered
     // Check to see if the blip should be killed (timer ran out)
+    int a = blip->speed;
+    if(mt_bool()) {
+        a *= -1;
+    }
+
     if(blip->cooldown) {
-        blip->rgba[3] += (mt_bool()?100:-100);
+        blip->rgba[3] += a; 
     } else {
         blip->flags &= ~EF_ALIVE;
     }

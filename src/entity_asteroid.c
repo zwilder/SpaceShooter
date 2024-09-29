@@ -184,7 +184,7 @@ void spawn_small_asteroid(Entity *entity, WSL_App *game) {
     asteroid->update = &update_asteroid;
     asteroid->spritescale = entity->spritescale;
     asteroid->take_damage = &asteroid_damage;
-    //asteroid->deathfunc = &asteroid_death;
+    asteroid->deathfunc = &asteroid_sm_death;
     wsl_add_entity(game, asteroid);
 }
 
@@ -213,5 +213,13 @@ void asteroid_death(Entity *entity, WSL_App *game) {
             spawn_ufo(game, entity);
         }
         //spawn_brown_smoke(entity, WSL_App *game);
+        game->score += 50;
+    }
+}
+
+void asteroid_sm_death(Entity *entity, WSL_App *game) {
+    if(!((entity->flags & EF_OOB) == EF_OOB)) {
+        game->score += 100;
+        //spawn_powerups here maybe?
     }
 }

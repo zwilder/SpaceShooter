@@ -132,8 +132,9 @@ void draw_game(WSL_App *game) {
 
     // Render the HUD
     if(player) {
+        //Extra spaces so that the function allocates enough space for larger numbers
         wsl_texture_load_text(game, game->hud_text, hud_color, 
-                "Points: 0");
+                "Score: %d       ",game->score); 
         wsl_texture_render(game->hud_text, 20,2);
         switch(player->health) {
             case 1:

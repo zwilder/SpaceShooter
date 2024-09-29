@@ -98,6 +98,7 @@ WSL_App* wsl_init_sdl(void) {
         app->entities = NULL;
         app->bgoffset = 0;
         app->asteroidspawn = 50;
+        app->score = 0;
         app->state = GS_MENU;
         
         // Set keyboard flags to false
