@@ -20,7 +20,33 @@
 
 #include <spaceshooter.h>
 
+void update_menu(WSL_App *game);
+void update_newgame(WSL_App *game);
+void update_game(WSL_App *game);
+void update_scores(WSL_App *game);
+void update_gameover(WSL_App *game);
+
 void update(WSL_App *game) {
+    switch(game->state) {
+        case GS_MENU:
+            update_menu(game);
+            break;
+        case GS_NEW:
+            update_newgame(game);
+            break;
+        case GS_GAMEOVER:
+            update_gameover(game);
+            break;
+        case GS_SCORES:
+        case GS_GAME:
+            update_game(game);
+            break;
+        default:
+            break;
+    }
+}
+
+void update_menu(WSL_App *game) {
     Entity *entity = NULL, *tmp = NULL;
 
     // Update entities
@@ -29,7 +55,7 @@ void update(WSL_App *game) {
         entity->update(entity,game);
         entity = entity->next;
     }
-
+    
     // Cleanup entity list
     entity = game->entities;
     while(entity) {
@@ -51,6 +77,75 @@ void update(WSL_App *game) {
     if(game->asteroidspawn) {
         game->asteroidspawn -= 1;
     } else {
+        // Spawn asteroid, maybe
+        spawn_asteroid(game);
+    }
+
+    // Advance background
+    game->bgoffset += 4;
+    if(game->bgoffset > game->bg->h) game->bgoffset = 0;
+}
+
+void update_newgame(WSL_App *game) {
+    Entity *entity = NULL, *tmp = NULL;
+
+    // Destroy all entities
+    entity = game->entities;
+    while(entity) {
+        tmp = entity;
+        entity = entity->next;
+        wsl_destroy_entity(game, tmp);
+    }
+
+    // Make the player
+    SDL_Rect playerrect = {211, 941, 99 ,75};
+    Entity *player = create_player(playerrect);
+    player->x = (SCREEN_WIDTH / 2) - (playerrect.w / 2);
+    player->y = (SCREEN_HEIGHT) - playerrect.h;
+    player->flags |= EF_INV | EF_COOLDOWN; // Start "invulnerable"
+    player->frame = 60; //60fps, 120 is 2 seconds
+    player->cooldown = 25; // Can't shoot while "invulnerable"
+    wsl_add_entity(game, player);
+
+    // Switch the state
+    game->state = GS_GAME;
+}
+
+void update_game(WSL_App *game) {
+    Entity *entity = NULL, *tmp = NULL;
+
+    // Update entities
+    entity = game->entities;
+    while(entity) {
+        entity->update(entity,game);
+        entity = entity->next;
+    }
+
+    // Cleanup entity list
+    entity = game->entities;
+    while(entity) {
+        tmp = entity;
+        entity = entity->next;
+        if(tmp->cooldown) {
+            tmp->cooldown -= 1;
+        } else {
+            tmp->flags &= ~EF_COOLDOWN;
+        }
+        if(!((tmp->flags & EF_ALIVE) == EF_ALIVE)) {
+            //Entity is dead, call death function, remove it
+            //if it's the player, change game state
+            if(entity_is_player(tmp) && !entity_is_projectile(tmp)) {
+                game->state = GS_GAMEOVER;
+            }
+            if(tmp->deathfunc) tmp->deathfunc(tmp, game);
+            wsl_destroy_entity(game, tmp);
+        }
+    }
+
+    // Check enemy spawn timer
+    if(game->asteroidspawn) {
+        game->asteroidspawn -= 1;
+    } else {
         // Spawn asteroid
         spawn_asteroid(game);
     }
@@ -58,5 +153,32 @@ void update(WSL_App *game) {
     // Advance background
     game->bgoffset += 4;
     if(game->bgoffset > game->bg->h) game->bgoffset = 0;
+}
+
+void update_scores(WSL_App *game) {
+
+}
+
+void update_gameover(WSL_App *game) {
+    Entity *entity = NULL, *tmp = NULL;
+    int i = 0;
+    update_game(game); // Do all the same stuff as in game state but then...
+    // Check to see if any keys were pressed
+    // TODO: There needs to be some sort of delay or something here or a prompt
+    // for a specific key on game over (otherwise this just poofs away if the
+    // player is holding down a key when they die)
+    for(i = 0; i < MAX_KEYBOARD_KEYS; i++) {
+        if(game->keyboard[i]) {
+            // Destroy all entities
+            entity = game->entities;
+            while(entity) {
+                tmp = entity;
+                entity = entity->next;
+                wsl_destroy_entity(game, tmp);
+            }
+            // Back to the menu!
+            game->state = GS_MENU;
+        }
+    }
 }
 

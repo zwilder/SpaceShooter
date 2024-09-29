@@ -36,13 +36,6 @@ int main(int argc, char **argv) {
 
     init_genrand(time(NULL)); // Seed the pnrg
 
-    // Temporary player creation
-    SDL_Rect playerrect = {211, 941, 99 ,75};
-    Entity *player = create_player(playerrect);
-    player->x = (SCREEN_WIDTH / 2) - playerrect.w;
-    player->y = (SCREEN_HEIGHT) - playerrect.h;
-    wsl_add_entity(game, player);
-
     if(!game) {
         printf("Failed to create WSL_App!\n");
         return 1;

@@ -20,6 +20,11 @@
 
 #include <spaceshooter.h>
 
+void handle_keydown_menu(SDL_KeyboardEvent *event, WSL_App *game);
+void handle_keydown_game(SDL_KeyboardEvent *event, WSL_App *game);
+void handle_keydown_scores(SDL_KeyboardEvent *event, WSL_App *game);
+void handle_keydown_gameover(SDL_KeyboardEvent *event, WSL_App *game);
+
 void handle_events(WSL_App *game) {
     SDL_Event e;
     while(SDL_PollEvent(&e) != 0) {
@@ -40,6 +45,42 @@ void handle_events(WSL_App *game) {
 }
 
 void handle_keydown(SDL_KeyboardEvent *event, WSL_App *game) {
+    switch(game->state) {
+        case GS_MENU:
+            handle_keydown_menu(event,game);
+            break;
+        case GS_GAME:
+        case GS_SCORES:
+        case GS_GAMEOVER:
+        default:
+            handle_keydown_game(event, game);
+            break;
+    }
+}
+
+void handle_keydown_menu(SDL_KeyboardEvent *event, WSL_App *game) {
+    int i;
+    switch(event->keysym.sym) {
+        case SDLK_SPACE:
+            for(i = 0; i < mt_rand(5,10); i++) {
+                spawn_random_color_explosion(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, game);
+            }
+            break;
+        case SDLK_n:
+            game->state = GS_NEW;
+            break;
+        case SDLK_h:
+            game->state = GS_SCORES;
+            break;
+        case SDLK_q:
+        case SDLK_ESCAPE:
+            game->running = false;
+            break;
+        default: break;
+    }
+}
+
+void handle_keydown_game(SDL_KeyboardEvent *event, WSL_App *game) {
     if((event->repeat == 0) && (event->keysym.scancode < MAX_KEYBOARD_KEYS)) {
         game->keyboard[event->keysym.scancode] = true;
     }

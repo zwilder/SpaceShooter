@@ -27,6 +27,14 @@
 
 typedef struct Entity Entity;
 
+typedef enum {
+    GS_MENU,
+    GS_NEW,
+    GS_GAME,
+    GS_SCORES,
+    GS_GAMEOVER
+} GameStates;
+
 typedef struct {
     SDL_Texture *tex;
     SDL_Renderer *renderer; // Maybe unnecessary
@@ -47,6 +55,7 @@ typedef struct {
     Entity *entities; // Linked list of all the entities
     bool keyboard[MAX_KEYBOARD_KEYS]; // Keypress "flags" for all keys
     bool running; // Will likely be replaced with bitflags tlater
+    int state;
     int asteroidspawn; // Asteroid spawn timer
 } WSL_App;
 
