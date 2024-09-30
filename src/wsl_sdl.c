@@ -279,13 +279,18 @@ bool wsl_texture_load(WSL_Texture *t, char *path) {
 bool wsl_texture_load_text(WSL_App *app, WSL_Texture *t, SDL_Color color, char *fstr, ...) {
     if(!fstr) return false;
     if(!app) return false;
+
     va_list args;
     va_start(args, fstr);
-    int i = strlen(fstr) + 1;
-    SDL_Surface *text_surface = NULL;
-    char *str = malloc(i * sizeof(char));
-    vsnprintf(str,i,fstr,args);
+    int i = vsnprintf(NULL,0,fstr,args) + 1; //Get size without writing, +1 for '\0'
     va_end(args);
+
+    char *str = malloc(i * sizeof(char));
+    va_start(args, fstr);
+    vsnprintf(str,i,fstr,args); //Now that we know the size, write the string
+    va_end(args);
+
+    SDL_Surface *text_surface = NULL;
     if(t->tex) {
         SDL_DestroyTexture(t->tex);
         t->tex = NULL;

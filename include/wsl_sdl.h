@@ -50,12 +50,14 @@ typedef struct {
     WSL_Texture *spritesheet; // Spritesheet with all the sprites
     WSL_Texture *ui_spritesheet; // Spritesheet with all the UI textures
     WSL_Texture *bg; // Background texture, will be an array eventually?
-    WSL_Texture *hud_text; // Heads up display text
-    int bgoffset; // Scrollin' background offset
-    Entity *entities; // Linked list of all the entities
+    WSL_Texture *hud_text; // Display text
     bool keyboard[MAX_KEYBOARD_KEYS]; // Keypress "flags" for all keys
+
     bool running; // Will likely be replaced with bitflags tlater
+    Entity *entities; // Linked list of all the entities
     int state; // Current game state
+
+    int bgoffset; // Scrollin' background offset
     int asteroidspawn; // Asteroid spawn timer
     int score; // The current player score
 } WSL_App;
