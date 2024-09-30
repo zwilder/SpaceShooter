@@ -18,7 +18,8 @@ using SDL2 with C.
 Build with make, requires SDL2 libraries. 
 
 Some cool features!
-- Procedural particle based explosions!
+- Procedural particle based
+  [explosions!](https://zwilder.github.io/assets/Various/SpaceShooter_Explosions.mp4)
 - UFOs that move on random paths following bezier curves across the screen!
 - Scrolling background!
 - Scores!

@@ -38,6 +38,8 @@ void update(WSL_App *game) {
             update_gameover(game);
             break;
         case GS_SCORES:
+            update_scores(game);
+            break;
         case GS_GAME:
             update_game(game);
             break;
@@ -105,6 +107,8 @@ void update_newgame(WSL_App *game) {
     player->flags |= EF_INV | EF_COOLDOWN; // Start "invulnerable"
     player->frame = 60; //60fps, 120 is 2 seconds
     player->cooldown = 25; // Can't shoot while "invulnerable"
+    //player->txt = "SPUDS"; //Can't assign strings this way, just a reminder to
+                             //do this (correctly) someday
     wsl_add_entity(game, player);
 
     // Good luck!
@@ -145,6 +149,7 @@ void update_game(WSL_App *game) {
             //Entity is dead, call death function, remove it
             //if it's the player, change game state
             if(entity_is_player(tmp) && !entity_is_projectile(tmp)) {
+                //Check player lives, subtract one if possible if not GAMEOVER
                 game->state = GS_GAMEOVER;
                 spawn_bliptxt(0,0,game," ", 60,0,0,0,0,0); // Slight pause bliptxt
             }
@@ -167,7 +172,8 @@ void update_game(WSL_App *game) {
 }
 
 void update_scores(WSL_App *game) {
-
+    //Eventually this will do a fancy scrolling high scores list
+    game->state = GS_MENU;
 }
 
 void update_gameover(WSL_App *game) {

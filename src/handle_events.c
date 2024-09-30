@@ -49,8 +49,9 @@ void handle_keydown(SDL_KeyboardEvent *event, WSL_App *game) {
         case GS_MENU:
             handle_keydown_menu(event,game);
             break;
-        case GS_GAME:
         case GS_SCORES:
+            break;
+        case GS_GAME:
         case GS_GAMEOVER:
         default:
             handle_keydown_game(event, game);
