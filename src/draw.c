@@ -69,32 +69,19 @@ void draw_menu(WSL_App *game) {
     // Show the "Menu" (Write some stuff on the screen)
     x = SCREEN_WIDTH / 2;
     y = SCREEN_HEIGHT / 2;
-    wsl_texture_load_text(game, game->hud_text, hud_color, 
-            "S P A C E S H O O T E R");
-    wsl_texture_render(game->hud_text,
-            x - ((FONT_SIZE * 12) / 2),
-            y - (FONT_SIZE * 5));
-    wsl_texture_load_text(game, game->hud_text, hud_color, 
-            "[N] ew Game");
-    wsl_texture_render(game->hud_text,
-            x - ((FONT_SIZE * 7) / 2),
-            y - (FONT_SIZE * 2));
-    wsl_texture_load_text(game, game->hud_text, hud_color, 
-            "[H] igh Scores");
-    wsl_texture_render(game->hud_text,
-            x - ((FONT_SIZE * 7) / 2),
-            y - (FONT_SIZE * 1));
-    wsl_texture_load_text(game, game->hud_text, hud_color, 
-            "[Q] uit");
-    wsl_texture_render(game->hud_text,
-            x - ((FONT_SIZE * 7) / 2),
-            y);
+    wsl_ctext_render(game, hud_color, x - ((FONT_SIZE * 12) / 2),
+            y - (FONT_SIZE * 5), "S P A C E S H O O T E R");
+    wsl_ctext_render(game, hud_color, x - ((FONT_SIZE * 7) / 2),
+            y - (FONT_SIZE * 2), "[N] ew Game");
+    wsl_ctext_render(game, hud_color, x - ((FONT_SIZE * 7) / 2),
+            y - (FONT_SIZE * 1), "[H] igh Scores");
+    wsl_ctext_render(game, hud_color, x - ((FONT_SIZE * 7) / 2),
+            y, "[Q] uit");
 
     // I made this!
     hud_color.a -= 200;
-    wsl_texture_load_text(game, game->hud_text, hud_color, 
+    wsl_ctext_render(game, hud_color, 10, SCREEN_HEIGHT - FONT_SIZE,
             "Zach Wilder, 2024");
-    wsl_texture_render(game->hud_text, 10, SCREEN_HEIGHT - FONT_SIZE);
 
     // Present
     SDL_RenderPresent(game->renderer);
@@ -133,9 +120,7 @@ void draw_game(WSL_App *game) {
     // Render the HUD
     if(player) {
         //Extra spaces so that the function allocates enough space for larger numbers
-        wsl_texture_load_text(game, game->hud_text, hud_color, 
-                "Score: %d",game->score); 
-        wsl_texture_render(game->hud_text, 20,2);
+        wsl_ctext_render(game, hud_color, 20,2, "Score: %d",game->score);
         switch(player->health) {
             case 1:
                 hud_color.g -= 50;
@@ -151,15 +136,13 @@ void draw_game(WSL_App *game) {
                 break;
             default: break;
         }
-        wsl_texture_load_text(game, game->hud_text, hud_color, 
-                "Hull Integrity: %d%%", player->health * 25);
-        wsl_texture_render(game->hud_text,20, SCREEN_HEIGHT - FONT_SIZE - 2);
+        wsl_ctext_render(game, hud_color, 20, SCREEN_HEIGHT - FONT_SIZE - 2,
+                "Hull Integrity: %d%% ",player->health * 25);
     } else {
-        wsl_texture_load_text(game, game->hud_text, hud_color,
+        wsl_ctext_render(game, hud_color,
+                (SCREEN_WIDTH - (FONT_SIZE * 9)) / 2,
+                (SCREEN_HEIGHT - FONT_SIZE) / 2,
                 "GAME OVER");
-        wsl_texture_render(game->hud_text, 
-                (SCREEN_WIDTH - game->hud_text->w) / 2, 
-                (SCREEN_HEIGHT - game->hud_text->h) / 2);
     }
 
     // Present

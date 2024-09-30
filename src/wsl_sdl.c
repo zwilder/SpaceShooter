@@ -256,7 +256,7 @@ bool wsl_texture_load(WSL_Texture *t, char *path) {
         return false;
     }
 
-    // 0: nearest, 1: linear, 2: best
+    // 0: nearest, 1: linear, 2: best (Same as linear according to SDL2Wiki)
     if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"))
     {
         printf("Warning: Linear texture filtering not enabled!");
@@ -277,18 +277,27 @@ bool wsl_texture_load(WSL_Texture *t, char *path) {
 }
 
 bool wsl_texture_load_text(WSL_App *app, WSL_Texture *t, SDL_Color color, char *fstr, ...) {
+    if(!fstr || !app) return false;
+    va_list args;
+    va_start(args, fstr);
+    bool result = wsl_texture_load_vtext(app,t,color,fstr,args);
+    va_end(args);
+    return result;
+}
+
+bool wsl_texture_load_vtext(WSL_App *app, WSL_Texture *t, SDL_Color color, const char *fstr, va_list args) {
     if(!fstr) return false;
     if(!app) return false;
 
-    va_list args;
-    va_start(args, fstr);
-    int i = vsnprintf(NULL,0,fstr,args) + 1; //Get size without writing, +1 for '\0'
-    va_end(args);
+    va_list args_copy; // Copy the va_list since we need to read it twice. 
+    va_copy(args_copy,args);
+    int i = vsnprintf(NULL,0,fstr,args_copy) + 1; //Get size without writing, +1 for '\0'
+    va_end(args_copy);
 
     char *str = malloc(i * sizeof(char));
-    va_start(args, fstr);
+    if(!str) return false; // Return if malloc fails
+
     vsnprintf(str,i,fstr,args); //Now that we know the size, write the string
-    va_end(args);
 
     SDL_Surface *text_surface = NULL;
     if(t->tex) {
@@ -312,6 +321,38 @@ bool wsl_texture_load_text(WSL_App *app, WSL_Texture *t, SDL_Color color, char *
     }
     free(str);
     return (t->tex != NULL);
+}
+
+void wsl_ctext_render(WSL_App *app, SDL_Color color, int x, int y, char *fstr, ...) {
+    /*
+     * Currently typing nonsense like this to render a string of text. Lets make
+     * this simpler for my sanity.
+        //Originally this
+        wsl_texture_load_text(game, game->hud_text, hud_color, 
+                "Score: %d",game->score); 
+        wsl_texture_render(game->hud_text, 20,2);
+
+        //Much improve?
+        wsl_ctext_render(game, hud_color, 20,2, "Score: %d", game->score);
+        wsl_text_render(game, 20, 2, "Score: %d", game->score);
+    */
+    if(!app || !fstr) return;
+    if(!app->hud_text) return; //TODO: Need "default text" pointer in WSL_App
+    
+    va_list args;
+    va_start(args, fstr);
+    wsl_texture_load_vtext(app, app->hud_text, color, fstr, args);
+    va_end(args);
+    wsl_texture_render(app->hud_text,x,y);
+}
+
+void wsl_text_render(WSL_App *app, int x, int y, char *fstr, ...) {
+    SDL_Color color = {255,255,255,255}; //Default text color is white
+    va_list args;
+    va_start(args, fstr);
+    wsl_texture_load_vtext(app, app->hud_text, color, fstr, args);
+    va_end(args);
+    wsl_texture_render(app->hud_text,x,y);
 }
 
 void wsl_texture_render(WSL_Texture *t, int x, int y) {

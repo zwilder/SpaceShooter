@@ -64,7 +64,5 @@ void bliptxt_render(Entity *blip, WSL_App *game) {
         blip->rgba[2],blip->rgba[3]};
     int x = blip->x;
     int y = blip->y;
-    wsl_texture_load_text(game, game->hud_text, hud_color, 
-            blip->txt);
-    wsl_texture_render(game->hud_text,x,y);
+    wsl_ctext_render(game, hud_color,x,y,blip->txt);
 }

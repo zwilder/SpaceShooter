@@ -50,7 +50,7 @@ typedef struct {
     WSL_Texture *spritesheet; // Spritesheet with all the sprites
     WSL_Texture *ui_spritesheet; // Spritesheet with all the UI textures
     WSL_Texture *bg; // Background texture, will be an array eventually?
-    WSL_Texture *hud_text; // Display text
+    WSL_Texture *hud_text; // Display text (Needs better name)
     bool keyboard[MAX_KEYBOARD_KEYS]; // Keypress "flags" for all keys
 
     bool running; // Will likely be replaced with bitflags tlater
@@ -80,6 +80,11 @@ void destroy_wsl_texture(WSL_Texture *t);
 bool wsl_texture_load(WSL_Texture *t, char *path);
 bool wsl_texture_load_text(WSL_App *app, WSL_Texture *t, 
         SDL_Color color, char *fstr, ...);
+bool wsl_texture_load_vtext(WSL_App *app, WSL_Texture *t, 
+        SDL_Color color, const char *fstr, va_list args);
+void wsl_text_render(WSL_App *app, int x, int y, char *fstr, ...);
+void wsl_ctext_render(WSL_App *app, SDL_Color color, 
+        int x, int y, char *fstr, ...);
 void wsl_texture_render(WSL_Texture *t, int x, int y);
 void wsl_texture_render_rect(WSL_Texture *t, int x, int y, SDL_Rect *rect);
 void wsl_texture_render_rect_scaled(WSL_Texture *t, int x, int y, 
