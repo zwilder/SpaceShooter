@@ -31,7 +31,7 @@ WSL_App* wsl_init_sdl(void) {
     WSL_App *app = malloc(sizeof(WSL_App));
 
     // Initialize SDL
-    if(SDL_Init(SDL_INIT_VIDEO) < 0) {
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
         printf("SDL could not initialize. SDL Error: %s\n", SDL_GetError());
         success = false;
     }
@@ -122,6 +122,7 @@ WSL_App* wsl_init_sdl(void) {
 
 void wsl_cleanup_sdl(WSL_App *app) {
     Entity *entity = NULL;
+    int i;
     if(!app) return;
 
     // Cleanup SDL
@@ -132,9 +133,15 @@ void wsl_cleanup_sdl(WSL_App *app) {
     app->renderer = NULL;
     SDL_DestroyWindow(app->window);
     app->window = NULL;
+    for(i = 0; i < SND_MAX; i++) {
+        if(app->sounds[i]) {
+            Mix_FreeChunk(app->sounds[i]);
+        }
+    }
     IMG_Quit();
     TTF_CloseFont(app->font);
     TTF_Quit();
+    Mix_Quit();
     SDL_Quit();
 
     // Cleanup entity list
