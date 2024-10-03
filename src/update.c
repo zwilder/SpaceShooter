@@ -112,10 +112,19 @@ void update_newgame(WSL_App *game) {
     wsl_add_entity(game, player);
 
     // Good luck!
+    /* 
+     * Span long lived blip that flickers, and a short steady one on top...
+     * this gives the "neat" effect of a display "buzzing" out.
+     */
     spawn_bliptxt(SCREEN_WIDTH/2 - (FONT_SIZE * 17)/2,
             SCREEN_HEIGHT/2 - FONT_SIZE,
             game,"G O O D   L U C K , C A D E T !",
-            60,15,
+            90,30,
+            255,0,0,250);
+    spawn_bliptxt(SCREEN_WIDTH/2 - (FONT_SIZE * 17)/2,
+            SCREEN_HEIGHT/2 - FONT_SIZE,
+            game,"G O O D   L U C K , C A D E T !",
+            30,0,
             255,0,0,250);
 
     // Reset the score

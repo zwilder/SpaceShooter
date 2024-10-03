@@ -48,9 +48,9 @@ typedef struct {
     SDL_Renderer *renderer; // The SDL Renderer
     TTF_Font *font; // SDL Font
     WSL_Texture *spritesheet; // Spritesheet with all the sprites
-    WSL_Texture *ui_spritesheet; // Spritesheet with all the UI textures
     WSL_Texture *bg; // Background texture, will be an array eventually?
     WSL_Texture *hud_text; // Display text (Needs better name)
+    Mix_Chunk *sounds[SND_MAX]; // Array of sounds
     bool keyboard[MAX_KEYBOARD_KEYS]; // Keypress "flags" for all keys
 
     bool running; // Will likely be replaced with bitflags tlater
@@ -68,6 +68,7 @@ typedef struct {
 WSL_App* wsl_init_sdl(void);
 void wsl_cleanup_sdl(WSL_App *app);
 bool wsl_load_media(WSL_App *app);
+void wsl_play_sound(WSL_App *app, int id, int channel);
 void wsl_add_entity(WSL_App *app, Entity *entity);
 Entity* wsl_remove_entity(WSL_App *app, Entity *entity);
 void wsl_destroy_entity(WSL_App *app, Entity *entity);

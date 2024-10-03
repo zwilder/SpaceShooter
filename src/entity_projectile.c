@@ -111,5 +111,6 @@ void projectile_impact_death(Entity *proj, WSL_App *game) {
         flash->angle = 0.45;
         flash->spritescale = proj->spritescale * 0.6;
         wsl_add_entity(game, flash);
+        wsl_play_sound(game, mt_rand(SND_IMPACT0,SND_IMPACT4), CH_IMPACT);
     }
 }

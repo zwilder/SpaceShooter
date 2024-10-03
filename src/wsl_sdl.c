@@ -79,6 +79,16 @@ WSL_App* wsl_init_sdl(void) {
         }
     }
 
+    // Initialize sound
+    if(success) {
+        if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) == -1) {
+            //Mix_OpenAudio returns 0 on success, -1 on failure
+            printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n",
+                    Mix_GetError());
+            success = false;
+        }
+    }
+
     // Get the window surface
     if(success) {
         app->screen_surface = SDL_GetWindowSurface(app->window);
@@ -117,7 +127,6 @@ void wsl_cleanup_sdl(WSL_App *app) {
     // Cleanup SDL
     destroy_wsl_texture(app->bg);
     destroy_wsl_texture(app->spritesheet);
-    destroy_wsl_texture(app->ui_spritesheet);
     destroy_wsl_texture(app->hud_text);
     SDL_DestroyRenderer(app->renderer);
     app->renderer = NULL;
@@ -140,14 +149,10 @@ void wsl_cleanup_sdl(WSL_App *app) {
 
 bool wsl_load_media(WSL_App *app) {
     bool success = true;
+    int i;
     app->spritesheet = create_wsl_texture(app->renderer);
     if(!wsl_texture_load(app->spritesheet,"assets/spritesheet.png")) {
         printf("Unable to load assets/spritesheet.png!\n");
-        success = false;
-    }
-    app->ui_spritesheet = create_wsl_texture(app->renderer);
-    if(!wsl_texture_load(app->ui_spritesheet,"assets/uipackSpace_sheet.png")) {
-        printf("Unable to load assets/uipackSpace_sheet.png!\n");
         success = false;
     }
     app->bg = create_wsl_texture(app->renderer);
@@ -161,7 +166,35 @@ bool wsl_load_media(WSL_App *app) {
         success = false;
     }
     app->hud_text = create_wsl_texture(app->renderer);
+
+    for(i = 0; i < SND_MAX; i++) {
+        app->sounds[i] = NULL;
+    }
+    app->sounds[SND_PLAYER_FIRE] = Mix_LoadWAV("assets/sounds/laserSmall_001.ogg");
+    app->sounds[SND_ALIEN_FIRE] = Mix_LoadWAV("assets/sounds/laserSmall_000.ogg");
+    app->sounds[SND_ALIEN_SPAWN] = Mix_LoadWAV("assets/sounds/spaceEngine_002.ogg");
+    app->sounds[SND_EXPLODE0] = Mix_LoadWAV("assets/sounds/explosionCrunch_000.ogg");
+    app->sounds[SND_EXPLODE1] = Mix_LoadWAV("assets/sounds/explosionCrunch_001.ogg");
+    app->sounds[SND_EXPLODE2] = Mix_LoadWAV("assets/sounds/explosionCrunch_002.ogg");
+    app->sounds[SND_EXPLODE3] = Mix_LoadWAV("assets/sounds/explosionCrunch_003.ogg");
+    app->sounds[SND_EXPLODE4] = Mix_LoadWAV("assets/sounds/explosionCrunch_004.ogg");
+    app->sounds[SND_IMPACT0] = Mix_LoadWAV("assets/sounds/impactMetal_000.ogg");
+    app->sounds[SND_IMPACT1] = Mix_LoadWAV("assets/sounds/impactMetal_001.ogg");
+    app->sounds[SND_IMPACT2] = Mix_LoadWAV("assets/sounds/impactMetal_002.ogg");
+    app->sounds[SND_IMPACT3] = Mix_LoadWAV("assets/sounds/impactMetal_003.ogg");
+    app->sounds[SND_IMPACT4] = Mix_LoadWAV("assets/sounds/impactMetal_004.ogg");
+    for(i = 0; i < SND_MAX; i++) {
+        if(!(app->sounds[i])) {
+            printf("Failed to load sound: %d.\n",i);
+        }
+    }
     return success;
+}
+
+void wsl_play_sound(WSL_App *app, int id, int channel) {
+    if(Mix_PlayChannel(channel, app->sounds[id], 0) == -1) {
+        printf("Unable to play sound: %d\n", id);
+    }
 }
 
 void wsl_add_entity(WSL_App *app, Entity *entity) {

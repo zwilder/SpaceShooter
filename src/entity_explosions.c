@@ -151,7 +151,7 @@ void spawn_purple_explosion(int x, int y, WSL_App *game) {
     for(i = 0; i < num_particles; i++) {
         spawn_explosion_particle(x, y, game, spriterect,
                 0.75, max_radius, min_velocity, max_velocity,
-                mt_rand(200,255),mt_rand(0,75),mt_rand(200,255),mt_rand(25,200));
+                mt_rand(225,265),mt_rand(26,106),mt_rand(200,255),mt_rand(25,200));
     }
 }
 

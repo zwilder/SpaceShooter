@@ -214,6 +214,7 @@ void asteroid_death(Entity *entity, WSL_App *game) {
         }
         //spawn_brown_smoke(entity, WSL_App *game);
         game->score += 50;
+        wsl_play_sound(game, mt_rand(SND_EXPLODE0, SND_EXPLODE4), CH_ANY);
     }
 }
 

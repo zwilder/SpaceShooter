@@ -102,6 +102,7 @@ void spawn_ufo(WSL_App *game, Entity *from) {
         ufo->y = ufo->ai->bzst.y;
     }
     wsl_add_entity(game, ufo);
+    wsl_play_sound(game, SND_ALIEN_SPAWN, CH_ANY);
 }
 
 void ufo_update(Entity *ufo, WSL_App *game) {
@@ -184,6 +185,7 @@ void ufo_update(Entity *ufo, WSL_App *game) {
         wsl_add_entity(game, proj); // Add projectile to list
         ufo->flags |= EF_COOLDOWN; // Turn on cooldown flag
         ufo->cooldown = 60; // Start cooldown timer, entities should have a "firerate"
+        wsl_play_sound(game, SND_ALIEN_FIRE, CH_ALIEN);
     }
 }
 
@@ -209,4 +211,5 @@ void ufo_death(Entity *ufo, WSL_App *game) {
         spawn_random_color_explosion(ufo->x,ufo->y,game);
     }
     game->score += 500;
+    wsl_play_sound(game, mt_rand(SND_EXPLODE0, SND_EXPLODE4), CH_ANY);
 }

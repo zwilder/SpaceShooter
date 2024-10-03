@@ -27,4 +27,30 @@
 #define MAX_KEYBOARD_KEYS 350
 #define FONT_SIZE 20
 
+#define MAX_SND_CHANNELS 8
+
+enum {
+    CH_ANY = -1,
+    CH_PLAYER,
+    CH_ALIEN,
+    CH_IMPACT
+};
+
+enum {
+    SND_PLAYER_FIRE,
+    SND_ALIEN_FIRE,
+    SND_ALIEN_SPAWN,
+    SND_EXPLODE0,
+    SND_EXPLODE1,
+    SND_EXPLODE2,
+    SND_EXPLODE3,
+    SND_EXPLODE4,
+    SND_IMPACT0,
+    SND_IMPACT1,
+    SND_IMPACT2,
+    SND_IMPACT3,
+    SND_IMPACT4,
+    SND_MAX
+};
+
 #endif //DEFS_H

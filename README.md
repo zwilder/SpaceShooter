@@ -13,7 +13,7 @@ Good luck, cadet.
 --- 
 
 Fancy SDL2 space shooter project in C! Goal of this project is to gain familiarity with
-using SDL2 with C.
+using SDL2 with C, and also to practice making "complete" games. 
 
 Build with make, requires SDL2 libraries. 
 
@@ -22,6 +22,7 @@ Some cool features!
   [explosions!](https://zwilder.github.io/assets/Various/SpaceShooter_Explosions.mp4)
 - UFOs that move on random paths following bezier curves across the screen!
 - Scrolling background!
+- Sound effects! 
 - Scores!
 
 To Do:

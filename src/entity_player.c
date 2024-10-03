@@ -102,6 +102,7 @@ void update_player(Entity *player, WSL_App *game) {
         wsl_add_entity(game, proj); // Add projectile to list
         player->flags |= EF_COOLDOWN; // Turn on cooldown flag
         player->cooldown = 25; // Start cooldown timer, entities should have a "firerate"
+        wsl_play_sound(game, SND_PLAYER_FIRE, CH_PLAYER);
     }
     if((player->flags & EF_INV) == EF_INV) {
         player->frame -= 1;
@@ -143,6 +144,7 @@ void player_damage(Entity *player, WSL_App *game) {
         player->health -= 1;
         if(player->health <= 0) {
             player->flags &= ~EF_ALIVE;
+            wsl_play_sound(game, mt_rand(SND_EXPLODE0, SND_EXPLODE4), CH_ANY);
         }
         player->flags |= EF_INV | EF_COOLDOWN;
         player->frame = 120; //60fps, 120 is 2 seconds

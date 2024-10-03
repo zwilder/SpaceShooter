@@ -60,11 +60,13 @@ void handle_keydown(SDL_KeyboardEvent *event, WSL_App *game) {
 }
 
 void handle_keydown_menu(SDL_KeyboardEvent *event, WSL_App *game) {
-    int i;
+    int i,x,y;
     switch(event->keysym.sym) {
         case SDLK_SPACE:
             for(i = 0; i < mt_rand(5,10); i++) {
-                spawn_random_color_explosion(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, game);
+                x = mt_rand(0,SCREEN_WIDTH);
+                y = mt_rand(0,SCREEN_HEIGHT);
+                spawn_random_color_explosion(x,y, game);
             }
             //spawn_bliptxt(10,10,game,"TEST TEXT!",60,255,0,0,250);
             break;
