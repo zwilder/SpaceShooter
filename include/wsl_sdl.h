@@ -51,6 +51,7 @@ typedef struct {
     WSL_Texture *bg; // Background texture, will be an array eventually?
     WSL_Texture *hud_text; // Display text (Needs better name)
     Mix_Chunk *sounds[SND_MAX]; // Array of sounds
+    Mix_Music *music; // Music (obviously)
     bool keyboard[MAX_KEYBOARD_KEYS]; // Keypress "flags" for all keys
 
     bool running; // Will likely be replaced with bitflags tlater

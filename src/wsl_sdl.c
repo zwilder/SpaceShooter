@@ -174,6 +174,7 @@ bool wsl_load_media(WSL_App *app) {
     }
     app->hud_text = create_wsl_texture(app->renderer);
 
+    app->music = NULL;
     for(i = 0; i < SND_MAX; i++) {
         app->sounds[i] = NULL;
     }
@@ -196,6 +197,19 @@ bool wsl_load_media(WSL_App *app) {
         }
     }
     return success;
+}
+
+void wsl_load_music(WSL_App *app, char *filename) {
+    if(app->music) {
+        Mix_HaltMusic();
+        MixFreeMusic(app->music);
+        app->music = NULL;
+    }
+    music = Mix_LoadMUS(filename);
+}
+
+void wsl_play_music(WSL_App *app, int loop) {
+    Mix_PlayMusic(app->music, (loop) ? -1 : 0);
 }
 
 void wsl_play_sound(WSL_App *app, int id, int channel) {
