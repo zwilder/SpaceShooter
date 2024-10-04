@@ -32,7 +32,8 @@ typedef enum {
     EF_PROJECTILE   = 1 << 5,
     EF_OOB          = 1 << 6,
     EF_INV          = 1 << 7,
-    EF_BLIP         = 1 << 8
+    EF_BLIP         = 1 << 8,
+    EF_PICKUP       = 1 << 9
 } EntityFlags;
 
 typedef struct Entity Entity;
@@ -155,5 +156,13 @@ void spawn_bliptxt(int x, int y, WSL_App *game, char *txt, int life, int speed,
         uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 void update_bliptxt(Entity *blip, WSL_App *game);
 void bliptxt_render(Entity *blip, WSL_App *game);
+
+/*****
+ * Pickups
+ *****/
+Entity* create_pickup(SDL_Rect spriterect);
+void spawn_shield_pickup(int x, int y, WSL_App *game);
+void update_pickup(Entity *pickup, WSL_App *game);
+void shield_pickup_death(Entity *pickup, WSL_App *game);
 
 #endif //ENTITY_H

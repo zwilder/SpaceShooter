@@ -50,6 +50,7 @@ enum {
     SND_IMPACT2,
     SND_IMPACT3,
     SND_IMPACT4,
+    SND_POWERUP0,
     SND_MAX
 };
 

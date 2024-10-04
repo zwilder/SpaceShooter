@@ -29,6 +29,7 @@ To Do:
 - Keep track of scores on a permanent "High Scores" list
 - More aliens. Big aliens. Small aliens. 
 - Powerups!
+- Controller functionality?
 
 [Work in progress video: 9/29/24](https://zwilder.github.io/assets/Various/SpaceShooter_WIP240929.mp4)
 

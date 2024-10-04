@@ -191,6 +191,7 @@ bool wsl_load_media(WSL_App *app) {
     app->sounds[SND_IMPACT2] = Mix_LoadWAV("assets/sounds/impactMetal_002.ogg");
     app->sounds[SND_IMPACT3] = Mix_LoadWAV("assets/sounds/impactMetal_003.ogg");
     app->sounds[SND_IMPACT4] = Mix_LoadWAV("assets/sounds/impactMetal_004.ogg");
+    app->sounds[SND_POWERUP0] = Mix_LoadWAV("assets/sounds/sfx_twoTone.ogg");
     for(i = 0; i < SND_MAX; i++) {
         if(!(app->sounds[i])) {
             printf("Failed to load sound: %d.\n",i);
@@ -202,10 +203,10 @@ bool wsl_load_media(WSL_App *app) {
 void wsl_load_music(WSL_App *app, char *filename) {
     if(app->music) {
         Mix_HaltMusic();
-        MixFreeMusic(app->music);
+        Mix_FreeMusic(app->music);
         app->music = NULL;
     }
-    music = Mix_LoadMUS(filename);
+    app->music = Mix_LoadMUS(filename);
 }
 
 void wsl_play_music(WSL_App *app, int loop) {

@@ -119,7 +119,6 @@ void draw_game(WSL_App *game) {
 
     // Render the HUD
     if(player) {
-        //Extra spaces so that the function allocates enough space for larger numbers
         wsl_ctext_render(game, hud_color, 20,2, "Score: %d",game->score);
         switch(player->health) {
             case 1:
@@ -136,8 +135,13 @@ void draw_game(WSL_App *game) {
                 break;
             default: break;
         }
-        wsl_ctext_render(game, hud_color, 20, SCREEN_HEIGHT - FONT_SIZE - 2,
-                "Hull Integrity: %d%% ",player->health * 25);
+        if(player->health == 8) {
+            wsl_ctext_render(game, hud_color, 20, SCREEN_HEIGHT - FONT_SIZE - 2,
+                    "Shield Charge: MAXIMUM%%");
+        } else {
+            wsl_ctext_render(game, hud_color, 20, SCREEN_HEIGHT - FONT_SIZE - 2,
+                    "Shield Charge: %d%% ",player->health * 25);
+        }
     } else {
         wsl_ctext_render(game, hud_color,
                 (SCREEN_WIDTH - (FONT_SIZE * 9)) / 2,
