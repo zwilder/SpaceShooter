@@ -214,7 +214,7 @@ void asteroid_death(Entity *entity, WSL_App *game) {
         }
         //spawn_brown_smoke(entity, WSL_App *game);
         game->score += 50;
-        wsl_play_sound(game, mt_rand(SND_EXPLODE0, SND_EXPLODE4), CH_ANY);
+        wsl_play_sound(game, mt_rand(SND_EXPLODE3, SND_EXPLODE4), CH_ANY);
     }
 }
 
@@ -222,5 +222,6 @@ void asteroid_sm_death(Entity *entity, WSL_App *game) {
     if(!((entity->flags & EF_OOB) == EF_OOB)) {
         game->score += 100;
         //spawn_powerups here maybe?
+        spawn_random_pickup(entity, game, 25);
     }
 }

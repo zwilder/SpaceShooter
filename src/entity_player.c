@@ -199,3 +199,19 @@ void player_render(Entity *player, WSL_App *game) {
     }
     entity_render(player, game);
 }
+
+Entity* find_player(WSL_App *game) {
+    /*
+     * Finds the player ship and returns a reference to it
+     */
+    Entity *player = NULL; 
+    Entity *other = game->entities;
+    while(other) {
+        if(entity_is_player(other) && !entity_is_projectile(other)) {
+            player = other;
+            break;
+        }
+        other = other->next;
+    }
+    return player;
+}

@@ -140,6 +140,13 @@ bool entity_is_blip(Entity *a) {
     return((a->flags & EF_BLIP) == EF_BLIP);
 }
 
+bool entity_is_oob(Entity *a) {
+    /*
+     * Check if Entity "a" has oob flag
+     */
+    return ((a->flags & EF_OOB) == EF_OOB);
+}
+
 bool check_collision_rect(SDL_Rect a, SDL_Rect b) {
     /* 
      * From rect.h/c in the toolbox, check if rectangle "a" intersects rectangle

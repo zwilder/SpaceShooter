@@ -90,6 +90,7 @@ bool entity_is_player(Entity *a);
 bool entity_is_enemy(Entity *a);
 bool entity_is_projectile(Entity *a);
 bool entity_is_blip(Entity *a);
+bool entity_is_oob(Entity *a);
 bool check_collision_rect(SDL_Rect a, SDL_Rect b);
 
 /*****
@@ -104,6 +105,7 @@ Entity* create_player(SDL_Rect spriterect);
 void update_player(Entity *player, WSL_App *game);
 void player_damage(Entity *player, WSL_App *game);
 void player_render(Entity *player, WSL_App *game);
+Entity* find_player(WSL_App *game);
 
 /*****
  * Projectile entity functions - entity_projectile.c
@@ -162,7 +164,13 @@ void bliptxt_render(Entity *blip, WSL_App *game);
  *****/
 Entity* create_pickup(SDL_Rect spriterect);
 void spawn_shield_pickup(int x, int y, WSL_App *game);
+void spawn_points_pickup(int x, int y, WSL_App *game);
+void spawn_random_pickup(Entity *from, WSL_App *game, int chance);
 void update_pickup(Entity *pickup, WSL_App *game);
 void shield_pickup_death(Entity *pickup, WSL_App *game);
+void points_pickup_death(Entity *pickup, WSL_App *game, int points);
+void small_points_pickup_death(Entity *pickup, WSL_App *game);
+void med_points_pickup_death(Entity *pickup, WSL_App *game);
+void lg_points_pickup_death(Entity *pickup, WSL_App *game);
 
 #endif //ENTITY_H

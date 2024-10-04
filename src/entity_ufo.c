@@ -211,6 +211,6 @@ void ufo_death(Entity *ufo, WSL_App *game) {
         spawn_random_color_explosion(ufo->x,ufo->y,game);
     }
     game->score += 500;
-    spawn_shield_pickup(ufo->x,ufo->y,game); //Temporary, might do a random pickup
+    spawn_random_pickup(ufo,game,75); 
     wsl_play_sound(game, mt_rand(SND_EXPLODE0, SND_EXPLODE4), CH_ANY);
 }

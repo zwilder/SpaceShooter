@@ -80,9 +80,6 @@ Entity* create_pickup(SDL_Rect spriterect) {
 
 void spawn_shield_pickup(int x, int y, WSL_App *game) {
 //<SubTexture name="powerupRed_shield.png" x="776" y="928" width="34" height="33"/>
-//<SubTexture name="powerupYellow_shield.png" x="482" y="325" width="34" height="33"/>
-//<SubTexture name="powerupBlue_shield.png" x="777" y="679" width="34" height="33"/>
-//<SubTexture name="powerupGreen_shield.png" x="776" y="862" width="34" height="33"/>
     SDL_Rect spriterect = {776, 928, 34, 33};
     Entity *pickup = create_pickup(spriterect);
     pickup->x = x;
@@ -90,6 +87,64 @@ void spawn_shield_pickup(int x, int y, WSL_App *game) {
 
     pickup->deathfunc = &shield_pickup_death;
     wsl_add_entity(game, pickup);
+}
+
+void spawn_points_pickup(int x, int y, WSL_App *game) {
+//<SubTexture name="things_bronze.png" x="778" y="495" width="32" height="32"/>
+//<SubTexture name="things_gold.png" x="777" y="411" width="32" height="32"/>
+//<SubTexture name="things_silver.png" x="777" y="353" width="32" height="32"/>
+    SDL_Rect spriterect; 
+    int type = mt_rand(1,3);
+    spriterect.w = 32;
+    spriterect.h = 32;
+    switch(type) {
+        case 1:
+            spriterect.x = 778;
+            spriterect.y = 495;
+            break;
+        case 2:
+            spriterect.x = 777;
+            spriterect.y = 411;
+            break;
+        case 3:
+            spriterect.x = 777;
+            spriterect.y = 353;
+            break;
+        default:
+            break;
+    }
+    Entity *pickup = create_pickup(spriterect);
+    pickup->x = x;
+    pickup->y = y;
+    switch(type) {
+        case 1:
+            pickup->deathfunc = &small_points_pickup_death;
+            break;
+        case 2:
+            pickup->deathfunc = &med_points_pickup_death;
+            break;
+        case 3:
+        default:
+            pickup->deathfunc = &lg_points_pickup_death;
+            break;
+    }
+    wsl_add_entity(game, pickup);
+
+}
+
+void spawn_random_pickup(Entity *from, WSL_App *game, int chance) {
+    if(mt_chance(chance)) {
+        //choose a random pickup to spawn here
+        switch(mt_rand(1,2)) {
+            case 1:
+                spawn_shield_pickup(from->x,from->y, game); 
+                break;
+            case 2:
+            default:
+                spawn_points_pickup(from->x, from->y, game);
+                break;
+        }
+    }
 }
 
 void update_pickup(Entity *pickup, WSL_App *game) {
@@ -126,23 +181,32 @@ void update_pickup(Entity *pickup, WSL_App *game) {
 void shield_pickup_death(Entity *pickup, WSL_App *game) {
     // Check to see if the shield pickup is OOB, and if not then it died from
     // contacting the player. Find the player and increase the health.
-
-    Entity *player = NULL; 
-    Entity *other = game->entities;
-    if(!((pickup->flags & EF_OOB) == EF_OOB)) {
-        while(other) {
-            if(entity_is_player(other) && !entity_is_projectile(other)) {
-                player = other;
-                break;
-            }
-            other = other->next;
+    Entity *player = find_player(game);
+    if(!entity_is_oob(pickup) && player) {
+        player->health += 1;
+        if(player->health > 8) {
+            player->health = 8;
         }
-        if(player) {
-            player->health += 1;
-            if(player->health > 8) {
-                player->health = 8;
-            }
-            wsl_play_sound(game, SND_POWERUP0, CH_ANY);
-        }
+        wsl_play_sound(game, SND_POWERUP0, CH_ANY);
     }
+}
+
+void points_pickup_death(Entity *pickup, WSL_App *game, int points) {
+    Entity *player = find_player(game);
+    if(!entity_is_oob(pickup) && player) {
+        game->score += points;
+        wsl_play_sound(game, SND_POWERUP0, CH_ANY);
+    }
+}
+
+void small_points_pickup_death(Entity *pickup, WSL_App *game) {
+    points_pickup_death(pickup, game, 50);
+}
+
+void med_points_pickup_death(Entity *pickup, WSL_App *game) {
+    points_pickup_death(pickup, game, 100);
+}
+
+void lg_points_pickup_death(Entity *pickup, WSL_App *game) {
+    points_pickup_death(pickup, game, 150);
 }
