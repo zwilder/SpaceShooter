@@ -75,6 +75,14 @@ void update_player(Entity *player, WSL_App *game) {
         player->y = SCREEN_HEIGHT - h;
     }
 
+    // Check to see if one of the direction keys are pressed, and render the
+    // thrusters (should spit out some particles here!)
+    if(game->keyboard[SDL_SCANCODE_UP] || game->keyboard[SDL_SCANCODE_LEFT] || 
+     game->keyboard[SDL_SCANCODE_RIGHT] ) {
+        //create_particle_test(player,game);
+        spawn_thruster_particles(player,game,mt_rand(2,20));
+    }
+
     // Fire lasers!
     if(game->keyboard[SDL_SCANCODE_SPACE] && !((player->flags & EF_COOLDOWN) == EF_COOLDOWN)) {
         proj = create_projectile(player, projrect);

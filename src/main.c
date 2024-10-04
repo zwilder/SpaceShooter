@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
     long lag = 0, current = 0, elapsed = 0;
     long prev = current_ms();
     long msperframe = 16; // 16ms = ~60fps, 33ms = ~30fps
-    WSL_App *game = wsl_init_sdl(); // Start SDL
+    WSL_App *game = wsl_init_sdl(); // Start SDL, load resources
 
     init_genrand(time(NULL)); // Seed the pnrg
 

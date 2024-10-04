@@ -135,6 +135,16 @@ void update_asteroid(Entity *asteroid, WSL_App *game);
 void asteroid_damage(Entity *asteroid, WSL_App *game);
 
 /*****
+ * Particles - entity_particles.c
+ *****/
+void update_particle(Entity *particle, WSL_App *game);
+void particle_death(Entity *particle, WSL_App *game);
+void spawn_thruster_particles(Entity *from, WSL_App *game, int qty);
+void spawn_thruster_particle(Entity *from, WSL_App *game);
+void render_particle_test(Entity *particle, WSL_App *game);
+Entity* create_particle_test(Entity *from, WSL_App *game);
+
+/*****
  * Explosion particles - entity_explosions.c
  *****/
 void spawn_explosion_particle(int x, int y, WSL_App *game, SDL_Rect spriterect,
@@ -145,10 +155,6 @@ void spawn_purple_explosion(int x, int y, WSL_App *game);
 void spawn_green_explosion(int x, int y, WSL_App *game);
 void spawn_asteroid_explosion(int x, int y, WSL_App *game);
 void spawn_random_color_explosion(int x, int y, WSL_App *game);
-void update_particle(Entity *particle, WSL_App *game);
-void particle_death(Entity *particle, WSL_App *game);
-Entity* create_particle_test(Entity *from, WSL_App *game);
-void render_particle_test(Entity *particle, WSL_App *game);
 void firework_death(Entity *entity, WSL_App *game);
 
 /*****

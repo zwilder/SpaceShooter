@@ -19,16 +19,17 @@ Build with make, requires SDL2 libraries.
 
 Some cool features!
 - Procedural particle based
-  [explosions!](https://zwilder.github.io/assets/Various/SpaceShooter_Explosions.mp4)
+  [explosions](https://zwilder.github.io/assets/Various/SpaceShooter_Explosions.mp4)
+and other particle effects!
 - UFOs that move on random paths following bezier curves across the screen!
 - Scrolling background!
 - Sound effects! 
+- Powerups!
 - Scores!
 
 To Do:
 - Keep track of scores on a permanent "High Scores" list
 - More aliens. Big aliens. Small aliens. 
-- Powerups!
 - Controller functionality?
 
 [Work in progress video: 9/29/24](https://zwilder.github.io/assets/Various/SpaceShooter_WIP240929.mp4)

@@ -49,7 +49,8 @@ Entity* create_ufo(SDL_Rect spriterect) {
         ufo->ai->bzend.x = SCREEN_WIDTH + xoff;
     }
     //ufo->ai->bzend.x = ufo->ai->bzst.x ? (-10) : (SCREEN_WIDTH - 10);
-    ufo->ai->bzend.y = (SCREEN_HEIGHT / 2)*(float)genrand_real1();
+    //ufo->ai->bzend.y = (SCREEN_HEIGHT / 2)*(float)genrand_real1();
+    ufo->ai->bzend.y = 0; //Keeps the UFOs at the top of the screen
 
     //Interpolation point starts at 0
     ufo->ai->bzt = 0;
