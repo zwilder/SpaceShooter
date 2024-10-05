@@ -80,7 +80,7 @@ void update_player(Entity *player, WSL_App *game) {
     if(game->keyboard[SDL_SCANCODE_UP] || game->keyboard[SDL_SCANCODE_LEFT] || 
      game->keyboard[SDL_SCANCODE_RIGHT] ) {
         //create_particle_test(player,game);
-        spawn_thruster_particles(player,game,mt_rand(2,20));
+        spawn_thruster_particles(player,game,mt_rand(2,10));
     }
 
     // Fire lasers!

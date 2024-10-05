@@ -79,10 +79,10 @@ void spawn_thruster_particle(Entity *from, WSL_App *game) {
      * send it off in a short "cone" towards the bottom of the screen. Should be
      * called multiple times for maximum effect.
      */
-    int max_velocity = 2; // Fiddle with this, should be a random number
+    int max_velocity = mt_rand(2,6); // Fiddle with this, should be a random number
     int min_velocity = 0; // Fiddle with this, should be a random number
-    float x = from->x + ((from->spriterect.w * from->spritescale)/2);
-    float y = from->y + (from->spriterect.h * from->spritescale);
+    float x = from->x + ((from->spriterect.w * from->spritescale)/2); //Middle of from
+    float y = from->y + (from->spriterect.h * from->spritescale); //Bottom of from
 	//<SubTexture name="star1.png" x="628" y="681" width="25" height="24"/>
 	//<SubTexture name="star2.png" x="222" y="84" width="25" height="24"/>
 	//<SubTexture name="star3.png" x="576" y="300" width="24" height="24"/>
@@ -98,10 +98,10 @@ void spawn_thruster_particle(Entity *from, WSL_App *game) {
     particle->dy = min_velocity + (max_velocity*genrand_real1());
     if(from->angle < 0) {
         //From is pointed left, shoot particle right
-        particle->dx = mt_rand(2,24) / mt_rand(2,4);
+        particle->dx = mt_rand(2,12) / mt_rand(2,4);
     } else if (from->angle > 0) {
         //From is pointed right, shoot particle left
-        particle->dx = mt_rand(2,24) / mt_rand(-4,-2);
+        particle->dx = mt_rand(2,12) / mt_rand(-4,-2);
     } else {
         //Shoot particle down
         particle->dx = mt_rand(-1,1) / (mt_rand(1,4)); 
@@ -109,7 +109,7 @@ void spawn_thruster_particle(Entity *from, WSL_App *game) {
     particle->speed = 1; //Basic speed
     particle->angle = 45; // Angle here is the SPRITE angle, should be passed in?
     particle->rgba[0] = mt_rand(225,255); // Red, green, blue, and alpha used for the particle
-    particle->rgba[1] = mt_rand(0,155); // Make it orangeish?
+    particle->rgba[1] = mt_rand(0,155); // Make it orangeish? Could be passed in.
     particle->rgba[2] = 0;
     particle->rgba[3] = mt_rand(100,200);
     particle->frame = mt_rand(0,5); // Each particle lives for a diffent time

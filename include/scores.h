@@ -18,42 +18,22 @@
 * along with Space Shooter.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DEFS_H
-#define DEFS_H
+#ifndef SCORES_H
+#define SCORES_H
 
-#define SCREEN_WIDTH 1024
-#define SCREEN_HEIGHT 768
+typedef struct Highscore Highscore;
 
-#define MAX_KEYBOARD_KEYS 350
-#define FONT_SIZE 20
-
-#define MAX_SND_CHANNELS 8
-
-#define NUM_HIGHSCORES 8
-
-enum {
-    CH_ANY = -1,
-    CH_PLAYER,
-    CH_ALIEN,
-    CH_IMPACT
+struct Highscore {
+    bool recent;
+    int score;
+    int namelength;
+    char *name;
 };
 
-enum {
-    SND_PLAYER_FIRE,
-    SND_ALIEN_FIRE,
-    SND_ALIEN_SPAWN,
-    SND_EXPLODE0,
-    SND_EXPLODE1,
-    SND_EXPLODE2,
-    SND_EXPLODE3,
-    SND_EXPLODE4,
-    SND_IMPACT0,
-    SND_IMPACT1,
-    SND_IMPACT2,
-    SND_IMPACT3,
-    SND_IMPACT4,
-    SND_POWERUP0,
-    SND_MAX
-};
+bool save_scores(WSL_App *app);
+bool load_scores(WSL_App *app);
+void create_scores(WSL_App *app);
+void close_scores(WSL_App *app);
+void add_score(WSL_App *app, int score);
 
-#endif //DEFS_H
+#endif //SCORES_H

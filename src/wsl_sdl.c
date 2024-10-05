@@ -110,6 +110,8 @@ WSL_App* wsl_init_sdl(void) {
         app->asteroidspawn = 50;
         app->score = 0;
         app->state = GS_MENU;
+        app->scores = malloc(sizeof(Highscore) * NUM_HIGHSCORES);
+        load_scores(app);
         
         // Set keyboard flags to false
         for(i = 0; i < MAX_KEYBOARD_KEYS; i++) {
@@ -150,6 +152,10 @@ void wsl_cleanup_sdl(WSL_App *app) {
         app->entities = app->entities->next;
         destroy_entity(entity);
     }
+
+    // Save scores and then close them
+    save_scores(app);
+    close_scores(app);
 
     free(app);
 }

@@ -160,6 +160,7 @@ void update_game(WSL_App *game) {
             if(entity_is_player(tmp) && !entity_is_projectile(tmp)) {
                 //Check player lives, subtract one if possible if not GAMEOVER
                 game->state = GS_GAMEOVER;
+                add_score(game, game->score);
                 spawn_bliptxt(0,0,game," ", 60,0,0,0,0,0); // Slight pause bliptxt
             }
             if(tmp->deathfunc) tmp->deathfunc(tmp, game);
@@ -182,7 +183,7 @@ void update_game(WSL_App *game) {
 
 void update_scores(WSL_App *game) {
     //Eventually this will do a fancy scrolling high scores list
-    game->state = GS_MENU;
+    update_menu(game);
 }
 
 void update_gameover(WSL_App *game) {
@@ -212,8 +213,8 @@ void update_gameover(WSL_App *game) {
                 }
             }
             if(chstate) {
-                // Back to the menu!
-                game->state = GS_MENU;
+                // Show the high score table!
+                game->state = GS_SCORES;
             }
         }
     }

@@ -47,6 +47,7 @@
  *****/
 #include <defs.h>
 #include <entity.h>
+#include <scores.h>
 #include <wsl_sdl.h>
 #include <handle_events.h>
 #include <update.h>

@@ -25,10 +25,9 @@ and other particle effects!
 - Scrolling background!
 - Sound effects! 
 - Powerups!
-- Scores!
+- Scores AND a high score table!
 
 To Do:
-- Keep track of scores on a permanent "High Scores" list
 - More aliens. Big aliens. Small aliens. 
 - Controller functionality?
 

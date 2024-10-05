@@ -26,6 +26,7 @@
 #include <SDL2/SDL_ttf.h>
 
 typedef struct Entity Entity;
+typedef struct Highscore Highscore;
 
 typedef enum {
     GS_MENU,
@@ -53,6 +54,7 @@ typedef struct {
     Mix_Chunk *sounds[SND_MAX]; // Array of sounds
     Mix_Music *music; // Music (obviously)
     bool keyboard[MAX_KEYBOARD_KEYS]; // Keypress "flags" for all keys
+    Highscore *scores;
 
     bool running; // Will likely be replaced with bitflags tlater
     Entity *entities; // Linked list of all the entities

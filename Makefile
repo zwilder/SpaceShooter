@@ -4,6 +4,9 @@ OBJ_DIR = ./objs
 INC_DIR = ./include
 CC = gcc
 CFLAGS = -I$(INC_DIR)/ 
+# -no-pie added to the linker flags so that the generated executable can be
+#  launched from the file browser in Ubuntu. Otherwise Ubuntu thinks the
+#  executable is a "shared library" file. 
 LDFLAGS = -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -no-pie
 OFLAGS = -O2
 GFLAGS = -g -Wall 
